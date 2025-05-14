@@ -2,6 +2,33 @@
 
 This document captures all accepted architectural and development decisions for the Patient & Studio Scheduler healthcare SaaS platform. The implementation plan prioritizes HIPAA compliance and secure handling of patient data throughout all aspects of the application.
 
+## Phase 1 Quick Reference
+
+The immediate focus for Phase 1 implementation (Weeks 1-2) is on the following key tasks:
+
+1. **Development Environment**:
+   - Complete Docker Compose setup with PostgreSQL, Redis, MinIO, and Mailpit
+   - Configure environment variables with proper validation
+   - Set up local development workflow with hot reloading
+
+2. **Developer Tooling**:
+   - Configure VS Code Dev Container
+   - Set up ESLint and Prettier with healthcare-specific rules
+   - Implement pre-commit hooks with PHI detection
+
+3. **Foundational Architecture**:
+   - Implement row-level security for multi-tenancy
+   - Configure field-level encryption for PHI
+   - Set up database schema with proper tenant isolation
+
+4. **CI/CD Pipeline**:
+   - Configure GitHub Actions for automated testing and deployment
+   - Implement security scanning for HIPAA compliance
+   - Set up deployment to development environment
+
+For detailed task tracking with checkboxes, see [Tasks Document](cursor-memory-bank/tasks.md).
+For current implementation status, see [Progress Tracking](cursor-memory-bank/progress.md).
+
 ## 1. Architecture Decisions
 
 ### Multi-Tenancy Architecture
