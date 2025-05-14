@@ -6,4 +6,5 @@ onlyBuiltDependencies:
   - '@prisma/engines'
   - '@swc/core'
   - esbuild
+  - nx
   - prisma

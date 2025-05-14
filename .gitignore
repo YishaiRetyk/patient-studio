@@ -67,3 +67,4 @@ apps/backend/prisma/dev.db-journal
 logs/
 
 
+.nx/
