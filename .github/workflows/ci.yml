@@ -53,7 +53,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/..
 
       # 5️⃣  Lint, test, build – but only what changed (Nx)
       - name: Nx affected – lint, test, build
@@ -61,7 +61,7 @@ jobs:
           pnpm nx affected --target=lint   --parallel
           pnpm nx affected --target=test   --parallel
           pnpm nx affected --target=build  --parallel
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/..
 
       # 6️⃣  Dockerfile lint (Hadolint) – fails fast on bad practices
       - name: Dockerfile lint
