@@ -1,0 +1,47 @@
+{
+  "name": "Patient‑Studio Dev",
+
+  // 🆕 direct‑build (no dockerComposeFile / service)
+  "build": {
+    "context": "..",
+    "dockerfile": "../.devcontainer/Dockerfile"
+  },
+
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  /* ---- Features ---- */
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers-contrib/features/terragrunt:1": {}
+  },
+
+  /* ---- AWS creds (read‑only mount) ---- */
+  "mounts": [
+    "source=${localEnv:USERPROFILE}/.aws/patient-studio-dev,target=/home/dev/.aws,type=bind,readonly,consistency=cached"
+  ],
+
+  /* ---- VS Code tweaks ---- */
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "Prisma.prisma",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+
+  /* ---- Default AWS profile inside the box ---- */
+  "remoteEnv": {
+    "AWS_PROFILE": "patient-studio-dev"
+  }
+
+  // (Optional) If you still want Postgres/Redis/Mailpit to spin up
+  // automatically, add a postCreateCommand that calls docker‑compose,
+  // or run it manually on the host.
+}

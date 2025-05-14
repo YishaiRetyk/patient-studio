@@ -1,0 +1,35 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Activate pnpm
+        run: corepack prepare pnpm@9 --activate
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint, test, build
+        run: |
+          pnpm lint
+          pnpm test
+          pnpm -r build
+
+      - name: Dockerfile lint
+        uses: hadolint/hadolint-action@v3

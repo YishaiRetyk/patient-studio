@@ -1,0 +1,70 @@
+# Node
+node_modules/
+pnpm-lock.yaml
+.pnpm-debug.log
+.pnpm-store/
+
+
+# Builds
+dist/
+build/
+apps/**/dist/
+apps/**/build/
+apps/**/node_modules/
+coverage/
+
+# Env
+.env
+.env.*.local
+apps/**/.env
+apps/**/.env.*
+
+# VS Code
+.vscode/
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dev Containers
+.devcontainer/*.local
+.devcontainer/.env
+docker-compose.override.yml
+
+# Playwright
+apps/e2e/test-results/
+apps/e2e/.playwright/
+
+# Prisma
+apps/backend/prisma/dev.db
+apps/backend/prisma/dev.db-journal
+
+# Husky
+.husky/_/
+
+# Terraform
+**/.terraform/
+**/*.tfstate*
+
+# pnpm generated
+**/.modules.yaml
+**/.pnpm-workspace-state.json
+
+# Terragrunt cache
+**/.terragrunt-cache/
+
+# Local backups/archives
+*.tgz
+*.bak
+*.backup
+
+# Editor/IDE
+.idea/
+*.swp
+
+# Logs
+*.log
+logs/
+
+
