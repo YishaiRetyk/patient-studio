@@ -7,7 +7,7 @@ FROM node:20-bookworm
 # OS tooling
 #######################################################################
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git curl bash \
+    && apt-get install -y --no-install-recommends git curl bash libssl-dev=3.0.13-0ubuntu3.5 \
     && rm -rf /var/lib/apt/lists/*
 
 #######################################################################
