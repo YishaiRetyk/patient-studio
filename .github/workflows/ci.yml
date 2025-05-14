@@ -1,35 +1,73 @@
+# .github/workflows/ci.yml
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # keep Node’s output deterministic
+  FORCE_COLOR: "0"
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+    permissions:
+      contents: read
+      id-token: write          # for future OIDC deploys
 
-      - name: Setup Node
+    steps:
+      # 1️⃣  Checkout
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0       # required for Nx affected‑* commands
+
+      # 2️⃣  Node & pnpm (same versions as in dev‑container)
+      - name: Setup Node 20 + Corepack
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: pnpm
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Activate pnpm
-        run: corepack prepare pnpm@9 --activate
-
-      - name: Install deps
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint, test, build
+      - name: Activate pnpm 10
         run: |
-          pnpm lint
-          pnpm test
-          pnpm -r build
+          corepack enable
+          corepack prepare pnpm@10.10.0 --activate
 
+      # 3️⃣  System deps that some packages (e.g. Prisma, bcrypt) need
+      - name: Install OS tools
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev
+
+      # 4️⃣  Install workspace deps
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      # 5️⃣  Lint, test, build – but only what changed (Nx)
+      - name: Nx affected – lint, test, build
+        run: |
+          pnpm nx affected --target=lint   --parallel
+          pnpm nx affected --target=test   --parallel
+          pnpm nx affected --target=build  --parallel
+
+      # 6️⃣  Dockerfile lint (Hadolint) – fails fast on bad practices
       - name: Dockerfile lint
         uses: hadolint/hadolint-action@v3
+        with:
+          dockerfile: |
+            .devcontainer/Dockerfile
+            patient-studio/apps/backend/Dockerfile      # if/when you add one
+            patient-studio/apps/frontend/Dockerfile
+
+      # 7️⃣  Cache dist artifacts so next steps/jobs (or releases) can reuse
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            dist
+            patient-studio/apps/**/dist
