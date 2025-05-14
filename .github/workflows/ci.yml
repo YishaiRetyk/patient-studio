@@ -69,7 +69,7 @@ jobs:
         with:
           dockerfile: |
             .devcontainer/Dockerfile
-            patient-studio/apps/backend/Dockerfile      # if/when you add one
+            # patient-studio/apps/backend/Dockerfile      # if/when you add one
             patient-studio/apps/frontend/Dockerfile
 
       # 7️⃣  Cache dist artifacts so next steps/jobs (or releases) can reuse
