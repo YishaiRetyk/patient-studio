@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0       # required for Nx affected-* commands
 
       # 2️⃣  Node & pnpm (same versions as in dev-container)
-      - name: Setup Node 20 + Corepack
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -38,6 +38,9 @@ jobs:
         with:
           version: 10.10.0
           run_install: false
+
+      - name: Check pnpm version
+        run: pnpm --version
 
       # 3️⃣  System deps that some packages (e.g. Prisma, bcrypt) need
       - name: Install OS tools
