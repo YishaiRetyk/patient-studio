@@ -7,7 +7,11 @@ FROM node:20-bookworm
 # OS tooling
 #######################################################################
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git curl bash libssl-dev=3.0.13-0ubuntu3.5 \
+    && apt-get install -y --no-install-recommends \
+    git=1:2.39.5-0+deb12u2 \
+    curl=7.88.1-10+deb12u12 \
+    bash=5.2.15-2+b7 \
+    libssl-dev=3.0.13-0ubuntu3.5 \
     && rm -rf /var/lib/apt/lists/*
 
 #######################################################################
@@ -43,4 +47,4 @@ RUN mkdir -p ${PNPM_HOME} \
 USER ${USERNAME}
 WORKDIR /workspace
 # Ensure 'dev' can read secrets mounted into /run/secrets
-RUN sudo chown -R ${USERNAME}:${USERNAME} /run/secrets || true
+RUN chown -R ${USERNAME}:${USERNAME} /run/secrets || true
