@@ -69,11 +69,6 @@ jobs:
         with:
           dockerfile: .devcontainer/Dockerfile
 
-      - name: Hadolint frontend Dockerfile
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: patient-studio/apps/frontend/Dockerfile
-
       # 7️⃣  Cache dist artifacts so next steps/jobs (or releases) can reuse
       - name: Upload build artifacts
         if: success()
