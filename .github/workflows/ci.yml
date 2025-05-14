@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 env:
-  # keep Node’s output deterministic
+  # keep Node's output deterministic
   FORCE_COLOR: "0"
 
 jobs:
@@ -24,16 +24,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0       # required for Nx affected‑* commands
+          fetch-depth: 0       # required for Nx affected-* commands
 
-      # 2️⃣  Node & pnpm (same versions as in dev‑container)
+      # 2️⃣  Node & pnpm (same versions as in dev-container)
       - name: Setup Node 20 + Corepack
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      - name: Activate pnpm 10
+      - name: Activate pnpm 10
         run: |
           corepack enable
           corepack prepare pnpm@10.10.0 --activate
@@ -55,7 +55,7 @@ jobs:
 
       # 6️⃣  Dockerfile lint (Hadolint) – fails fast on bad practices
       - name: Dockerfile lint
-        uses: hadolint/hadolint-action@v3
+        uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: |
             .devcontainer/Dockerfile
