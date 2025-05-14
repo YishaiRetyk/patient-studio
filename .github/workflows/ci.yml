@@ -46,6 +46,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
 
       # 4️⃣  Install workspace deps
+      - name: List files in workspace
+        run: ls -l
+
+      - name: Print working directory
+        run: pwd
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --prefer-offline
 
