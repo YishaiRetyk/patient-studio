@@ -37,22 +37,13 @@ export class AppointmentsService {
     userId?: string;
   }): Promise<Appointment> {
     // Validate tenant context
-    await this.validateTenantContext(
-      data.tenantId,
-      data.patientId,
-      data.practitionerId,
-    );
+    await this.validateTenantContext(data.tenantId, data.patientId, data.practitionerId);
 
     // Validate booking rules
     this.validateAppointmentTimes(data.startTime, data.endTime);
 
     // Check for double-booking
-    await this.checkDoubleBooking(
-      data.practitionerId,
-      data.startTime,
-      data.endTime,
-      data.tenantId,
-    );
+    await this.checkDoubleBooking(data.practitionerId, data.startTime, data.endTime, data.tenantId);
 
     // Create appointment with version = 1 (optimistic locking)
     try {
@@ -72,9 +63,7 @@ export class AppointmentsService {
         },
       });
 
-      this.logger.log(
-        `Appointment created: ${appointment.id} for patient ${data.patientId}`,
-      );
+      this.logger.log(`Appointment created: ${appointment.id} for patient ${data.patientId}`);
 
       // Send confirmation email (T074)
       await this.sendConfirmationEmail(appointment);
@@ -184,9 +173,7 @@ export class AppointmentsService {
     } catch (error) {
       // Handle version mismatch (concurrent modification)
       if (error.code === 'P2025') {
-        throw new ConflictException(
-          'Appointment has been modified. Please refresh and try again.',
-        );
+        throw new ConflictException('Appointment has been modified. Please refresh and try again.');
       }
       throw error;
     }
@@ -268,9 +255,7 @@ export class AppointmentsService {
     }
 
     if (patient.tenantId !== practitioner.tenantId) {
-      throw new BadRequestException(
-        'Patient and practitioner must belong to the same tenant',
-      );
+      throw new BadRequestException('Patient and practitioner must belong to the same tenant');
     }
   }
 
@@ -289,9 +274,7 @@ export class AppointmentsService {
     // Must be at least 2 hours in advance (per FR-013)
     const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
     if (startTime < twoHoursFromNow) {
-      throw new BadRequestException(
-        'Appointments must be booked at least 2 hours in advance',
-      );
+      throw new BadRequestException('Appointments must be booked at least 2 hours in advance');
     }
 
     // endTime must be after startTime
@@ -362,15 +345,12 @@ export class AppointmentsService {
    */
   private async sendConfirmationEmail(appointment: any): Promise<void> {
     try {
-      await this.emailService.sendAppointmentConfirmation(
-        appointment.patient.email,
-        {
-          patientName: appointment.patient.fullName,
-          practitionerName: appointment.practitioner.fullName,
-          startTime: appointment.startTime,
-          endTime: appointment.endTime,
-        },
-      );
+      await this.emailService.sendAppointmentConfirmation(appointment.patient.email, {
+        patientName: appointment.patient.fullName,
+        practitionerName: appointment.practitioner.fullName,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+      });
     } catch (error) {
       this.logger.error(
         `Failed to send confirmation email for appointment ${appointment.id}: ${error.message}`,
@@ -392,14 +372,12 @@ export class AppointmentsService {
     const current = new Date(startDate);
 
     while (current <= endDate) {
-      const dayName = current
-        .toLocaleDateString('en-US', { weekday: 'long' })
-        .toLowerCase();
+      const dayName = current.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       const dayHours = availableHours?.[dayName];
 
       if (dayHours && Array.isArray(dayHours)) {
         dayHours.forEach((hours: any) => {
-          const [startHour, startMinute] = hours.start.split(':').map(Number);
+          const [startHour] = hours.start.split(':').map(Number);
           const [endHour, endMinute] = hours.end.split(':').map(Number);
 
           // Generate 30-minute slots

@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { sign, verify } from 'jsonwebtoken';
-import { randomBytes } from 'crypto';
 import { PrismaService } from '../../common/database/prisma.service';
 
 /**

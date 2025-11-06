@@ -13,7 +13,7 @@ import { BookingConfirmation } from '@/components/appointments/BookingConfirmati
  */
 export default function BookAppointmentPage() {
   // State
-  const [practitionerId, setPractitionerId] = useState<string>('');
+  const [practitionerId] = useState<string>(''); // TODO: Add practitioner selector
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -85,7 +85,7 @@ export default function BookAppointmentPage() {
       const startTime = `${selectedSlot.date}T${selectedSlot.startTime}:00Z`;
       const endTime = `${selectedSlot.date}T${selectedSlot.endTime}:00Z`;
 
-      const appointment = await createAppointment.mutateAsync({
+      await createAppointment.mutateAsync({
         patientId: 'current-patient-id', // TODO: Get from auth context
         practitionerId,
         startTime,
@@ -131,7 +131,7 @@ export default function BookAppointmentPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Book an Appointment</h1>
@@ -141,13 +141,11 @@ export default function BookAppointmentPage() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left Column: Calendar */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Step 1: Select a Date
-              </h2>
+            <div className="rounded-lg bg-white p-6 shadow">
+              <h2 className="mb-4 text-xl font-semibold text-gray-900">Step 1: Select a Date</h2>
               <AvailabilityCalendar
                 selectedDate={selectedDate}
                 onDateSelect={handleDateSelect}
@@ -157,10 +155,8 @@ export default function BookAppointmentPage() {
 
             {/* Time Slots */}
             {selectedDate && (
-              <div className="bg-white rounded-lg shadow p-6 mt-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Step 2: Select a Time
-                </h2>
+              <div className="mt-6 rounded-lg bg-white p-6 shadow">
+                <h2 className="mb-4 text-xl font-semibold text-gray-900">Step 2: Select a Time</h2>
                 <TimeSlotSelector
                   slots={slotsForSelectedDate}
                   selectedSlot={selectedSlot}
@@ -173,24 +169,20 @@ export default function BookAppointmentPage() {
 
           {/* Right Column: Booking Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Booking Summary
-              </h2>
+            <div className="sticky top-8 rounded-lg bg-white p-6 shadow">
+              <h2 className="mb-4 text-xl font-semibold text-gray-900">Booking Summary</h2>
 
               {/* Selected Date */}
               <div className="mb-4">
-                <p className="text-sm text-gray-500 mb-1">Date</p>
+                <p className="mb-1 text-sm text-gray-500">Date</p>
                 <p className="text-base font-medium text-gray-900">
-                  {selectedDate
-                    ? format(selectedDate, 'EEEE, MMMM d, yyyy')
-                    : 'Not selected'}
+                  {selectedDate ? format(selectedDate, 'EEEE, MMMM d, yyyy') : 'Not selected'}
                 </p>
               </div>
 
               {/* Selected Time */}
               <div className="mb-6">
-                <p className="text-sm text-gray-500 mb-1">Time</p>
+                <p className="mb-1 text-sm text-gray-500">Time</p>
                 <p className="text-base font-medium text-gray-900">
                   {selectedSlot
                     ? `${selectedSlot.startTime} - ${selectedSlot.endTime}`
@@ -200,7 +192,7 @@ export default function BookAppointmentPage() {
 
               {/* Error Message */}
               {bookingError && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
                   <p className="text-sm text-red-800">{bookingError}</p>
                 </div>
               )}
@@ -209,20 +201,16 @@ export default function BookAppointmentPage() {
               <button
                 onClick={handleBookAppointment}
                 disabled={!selectedSlot || createAppointment.isPending}
-                className={`
-                  w-full px-6 py-3 rounded-md font-medium text-white
-                  ${
-                    selectedSlot && !createAppointment.isPending
-                      ? 'bg-primary-600 hover:bg-primary-700'
-                      : 'bg-gray-300 cursor-not-allowed'
-                  }
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                `}
+                className={`w-full rounded-md px-6 py-3 font-medium text-white ${
+                  selectedSlot && !createAppointment.isPending
+                    ? 'bg-primary-600 hover:bg-primary-700'
+                    : 'cursor-not-allowed bg-gray-300'
+                } disabled:cursor-not-allowed disabled:opacity-50`}
               >
                 {createAppointment.isPending ? (
                   <span className="flex items-center justify-center">
                     <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -248,7 +236,7 @@ export default function BookAppointmentPage() {
               </button>
 
               {/* Info Text */}
-              <p className="mt-4 text-xs text-gray-500 text-center">
+              <p className="mt-4 text-center text-xs text-gray-500">
                 You'll receive confirmation and reminder emails after booking
               </p>
             </div>

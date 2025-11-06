@@ -22,7 +22,7 @@ export function TimeSlotSelector({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary-600"></div>
       </div>
     );
   }
@@ -31,9 +31,9 @@ export function TimeSlotSelector({
 
   if (availableSlots.length === 0) {
     return (
-      <div className="text-center py-8">
+      <div className="py-8 text-center">
         <p className="text-gray-500">No available time slots for this date.</p>
-        <p className="text-sm text-gray-400 mt-2">Please select another date.</p>
+        <p className="mt-2 text-sm text-gray-400">Please select another date.</p>
       </div>
     );
   }
@@ -59,8 +59,8 @@ export function TimeSlotSelector({
 
     return (
       <div className="mb-6">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">{title}</h4>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+        <h4 className="mb-3 text-sm font-medium text-gray-700">{title}</h4>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
           {slots.map((slot) => {
             const isSelected =
               selectedSlot &&
@@ -71,14 +71,11 @@ export function TimeSlotSelector({
               <button
                 key={`${slot.date}-${slot.startTime}`}
                 onClick={() => onSlotSelect(slot)}
-                className={`
-                  px-3 py-2 rounded-md text-sm font-medium transition-all
-                  ${
-                    isSelected
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-white border border-gray-300 text-gray-700 hover:border-primary-500 hover:bg-primary-50'
-                  }
-                `}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-all ${
+                  isSelected
+                    ? 'bg-primary-600 text-white'
+                    : 'border border-gray-300 bg-white text-gray-700 hover:border-primary-500 hover:bg-primary-50'
+                } `}
               >
                 {slot.startTime}
               </button>
@@ -91,7 +88,7 @@ export function TimeSlotSelector({
 
   return (
     <div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">
         Select Time ({availableSlots.length} available)
       </h3>
       {renderSlotGroup('Morning', morningSlots)}

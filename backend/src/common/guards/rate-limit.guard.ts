@@ -1,4 +1,11 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 
@@ -101,7 +108,11 @@ export class RateLimitGuard implements CanActivate {
  * Decorator to specify rate limit type
  * Usage: @RateLimit({ type: 'login' })
  */
-export const RateLimit = (config: { type: 'global' | 'login' | 'ai'; limit?: number; windowMs?: number }) => {
+export const RateLimit = (config: {
+  type: 'global' | 'login' | 'ai';
+  limit?: number;
+  windowMs?: number;
+}) => {
   return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
     if (descriptor) {
       Reflect.defineMetadata('rateLimit', config, descriptor.value);

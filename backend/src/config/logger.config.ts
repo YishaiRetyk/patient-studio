@@ -39,7 +39,8 @@ if (process.env.NODE_ENV === 'production' && process.env.AWS_CLOUDWATCH_LOG_GROU
   transports.push(
     new WinstonCloudWatch({
       logGroupName: process.env.AWS_CLOUDWATCH_LOG_GROUP,
-      logStreamName: process.env.AWS_CLOUDWATCH_LOG_STREAM || `api-${new Date().toISOString().split('T')[0]}`,
+      logStreamName:
+        process.env.AWS_CLOUDWATCH_LOG_STREAM || `api-${new Date().toISOString().split('T')[0]}`,
       awsRegion: process.env.AWS_REGION || 'us-east-1',
       messageFormatter: (log) => JSON.stringify(log),
       retentionInDays: 2555, // 7 years per FR-046

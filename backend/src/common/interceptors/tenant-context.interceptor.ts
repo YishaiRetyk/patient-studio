@@ -33,9 +33,7 @@ export class TenantContextInterceptor implements NestInterceptor {
     // Set PostgreSQL session variable for RLS
     // Per 02-tenant-isolation.sql: app.current_tenant_id
     try {
-      await this.prisma.$executeRawUnsafe(
-        `SET LOCAL app.current_tenant_id = '${user.tenantId}'`,
-      );
+      await this.prisma.$executeRawUnsafe(`SET LOCAL app.current_tenant_id = '${user.tenantId}'`);
 
       this.logger.debug(`Tenant context set: ${user.tenantId}`);
     } catch (error) {

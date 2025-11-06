@@ -36,10 +36,7 @@ export class AppointmentsController {
   @Get('availability')
   @Roles(UserRole.PATIENT, UserRole.PRACTITIONER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  async getAvailability(
-    @Query() query: GetAvailabilityDto,
-    @Request() req: any,
-  ) {
+  async getAvailability(@Query() query: GetAvailabilityDto, @Request() req: any) {
     const availability = await this.appointmentsService.getAvailability({
       practitionerId: query.practitionerId,
       startDate: new Date(query.startDate),
@@ -79,11 +76,7 @@ export class AppointmentsController {
   @Roles(UserRole.PATIENT, UserRole.PRACTITIONER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @AuditLog({ entityType: 'Appointment' })
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateAppointmentDto,
-    @Request() req: any,
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateAppointmentDto, @Request() req: any) {
     const appointment = await this.appointmentsService.update(id, {
       startTime: dto.startTime ? new Date(dto.startTime) : undefined,
       endTime: dto.endTime ? new Date(dto.endTime) : undefined,

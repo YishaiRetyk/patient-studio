@@ -24,7 +24,7 @@ export class PatientAuthService {
    * Generate magic link token (T039)
    * Per FR-002: 15-minute TTL for magic links
    */
-  async generateMagicLink(email: string, tenantId: string): Promise<string> {
+  async generateMagicLink(email: string, _tenantId: string): Promise<string> {
     const authConfig = this.configService.get('auth');
     const token = randomBytes(32).toString('hex');
     const expiresAt = Date.now() + authConfig.magicLink.ttl;
@@ -88,16 +88,12 @@ export class PatientAuthService {
     const otpLength = authConfig.otp.length;
 
     // Generate random 6-digit code
-    const code = Array.from({ length: otpLength }, () =>
-      Math.floor(Math.random() * 10),
-    ).join('');
+    const code = Array.from({ length: otpLength }, () => Math.floor(Math.random() * 10)).join('');
 
     const expiresAt = Date.now() + authConfig.otp.ttl;
 
     // Hash email + code for storage key
-    const key = createHash('sha256')
-      .update(`${email}:${tenantId}`)
-      .digest('hex');
+    const key = createHash('sha256').update(`${email}:${tenantId}`).digest('hex');
 
     this.otps.set(key, { code, email, expiresAt });
 
@@ -110,9 +106,7 @@ export class PatientAuthService {
    * Validate OTP code (T040)
    */
   async validateOTP(email: string, code: string, tenantId: string): Promise<any> {
-    const key = createHash('sha256')
-      .update(`${email}:${tenantId}`)
-      .digest('hex');
+    const key = createHash('sha256').update(`${email}:${tenantId}`).digest('hex');
 
     const otpData = this.otps.get(key);
 

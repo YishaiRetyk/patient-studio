@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Body, Query, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Query,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { PatientAuthService } from './patient-auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -30,10 +39,7 @@ export class AuthController {
   @Post('patient/magic-link')
   @HttpCode(HttpStatus.OK)
   async requestMagicLink(@Body() body: { email: string; tenantId: string }) {
-    const magicLink = await this.patientAuthService.generateMagicLink(
-      body.email,
-      body.tenantId,
-    );
+    const magicLink = await this.patientAuthService.generateMagicLink(body.email, body.tenantId);
 
     // In production, send email instead of returning link
     // await this.emailService.sendMagicLink(body.email, magicLink);
@@ -49,10 +55,7 @@ export class AuthController {
    * Validate magic link token
    */
   @Get('patient/magic-link/validate')
-  async validateMagicLink(
-    @Query('token') token: string,
-    @Query('tenantId') tenantId: string,
-  ) {
+  async validateMagicLink(@Query('token') token: string, @Query('tenantId') tenantId: string) {
     const patient = await this.patientAuthService.validateMagicLink(token, tenantId);
     return { patient };
   }
@@ -80,14 +83,8 @@ export class AuthController {
    */
   @Post('patient/otp/validate')
   @HttpCode(HttpStatus.OK)
-  async validateOTP(
-    @Body() body: { email: string; code: string; tenantId: string },
-  ) {
-    const patient = await this.patientAuthService.validateOTP(
-      body.email,
-      body.code,
-      body.tenantId,
-    );
+  async validateOTP(@Body() body: { email: string; code: string; tenantId: string }) {
+    const patient = await this.patientAuthService.validateOTP(body.email, body.code, body.tenantId);
     return { patient };
   }
 

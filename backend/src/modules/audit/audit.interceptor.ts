@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Reflector } from '@nestjs/core';
@@ -68,7 +62,8 @@ export class AuditInterceptor implements NestInterceptor {
               action,
               ipAddress: request.ip || request.connection.remoteAddress,
               userAgent: request.headers['user-agent'],
-              beforeValue: request.method === 'PATCH' || request.method === 'PUT' ? request.body : undefined,
+              beforeValue:
+                request.method === 'PATCH' || request.method === 'PUT' ? request.body : undefined,
               afterValue: response,
             })
             .catch((error) => {
