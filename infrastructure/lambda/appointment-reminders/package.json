@@ -1,0 +1,12 @@
+{
+  "name": "appointment-reminders-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function to process appointment reminder messages from SQS",
+  "main": "index.js",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

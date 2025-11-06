@@ -26,9 +26,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 
-// Feature modules (to be implemented in Phase 3+)
+// Feature modules (Phase 3+)
+import { AppointmentsModule } from './modules/appointments/appointments.module';
+
+// Feature modules (to be implemented in Phase 4+)
 // import { PatientsModule } from './modules/patients/patients.module';
-// import { AppointmentsModule } from './modules/appointments/appointments.module';
 // import { NotesModule } from './modules/notes/notes.module';
 // import { BillingModule } from './modules/billing/billing.module';
 // import { PractitionersModule } from './modules/practitioners/practitioners.module';
@@ -71,9 +73,11 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     AuditModule,
     NotificationsModule,
 
-    // Feature modules (to be added in Phase 3+)
+    // Phase 3 modules
+    AppointmentsModule,
+
+    // Feature modules (to be added in Phase 4+)
     // PatientsModule,
-    // AppointmentsModule,
     // NotesModule,
     // BillingModule,
     // PractitionersModule,
