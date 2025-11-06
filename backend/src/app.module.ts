@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TerminusModule } from '@nestjs/terminus';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 
 // Configuration imports (T030, T042, T046, T047, T048)
 import authConfig from './config/auth.config';
@@ -14,17 +15,23 @@ import openaiConfig from './config/openai.config';
 import rateLimitConfig from './config/rate-limit.config';
 import loggerConfig from './config/logger.config';
 
-// Services
+// Common services
 import { EncryptionService } from './common/encryption/encryption.service';
+import { PrismaService } from './common/database/prisma.service';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { TenantContextInterceptor } from './common/interceptors/tenant-context.interceptor';
 
-// Modules (to be implemented in Phase 3+)
-// import { AuthModule } from './modules/auth/auth.module';
+// Feature modules (Phase 2 complete)
+import { AuthModule } from './modules/auth/auth.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+
+// Feature modules (to be implemented in Phase 3+)
 // import { PatientsModule } from './modules/patients/patients.module';
 // import { AppointmentsModule } from './modules/appointments/appointments.module';
 // import { NotesModule } from './modules/notes/notes.module';
 // import { BillingModule } from './modules/billing/billing.module';
 // import { PractitionersModule } from './modules/practitioners/practitioners.module';
-// import { AuditModule } from './modules/audit/audit.module';
 
 /**
  * Root Application Module (T051)
@@ -59,18 +66,34 @@ import { EncryptionService } from './common/encryption/encryption.service';
     // Health checks
     TerminusModule,
 
+    // Phase 2 modules (complete)
+    AuthModule,
+    AuditModule,
+    NotificationsModule,
+
     // Feature modules (to be added in Phase 3+)
-    // AuthModule,
     // PatientsModule,
     // AppointmentsModule,
     // NotesModule,
     // BillingModule,
     // PractitionersModule,
-    // AuditModule,
   ],
   providers: [
     // Global services
     EncryptionService,
+    PrismaService,
+
+    // Global exception filter (T052)
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+
+    // Global tenant context interceptor (T034)
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenantContextInterceptor,
+    },
   ],
 })
 export class AppModule {}
