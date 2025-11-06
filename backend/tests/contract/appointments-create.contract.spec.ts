@@ -99,9 +99,7 @@ describe('POST /appointments (Contract)', () => {
         .expect(400);
 
       expect(response.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'patientId' }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ field: 'patientId' })]),
       );
     });
 
@@ -117,9 +115,7 @@ describe('POST /appointments (Contract)', () => {
         .expect(400);
 
       expect(response.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'practitionerId' }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ field: 'practitionerId' })]),
       );
     });
 
@@ -135,9 +131,7 @@ describe('POST /appointments (Contract)', () => {
         .expect(400);
 
       expect(response.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'startTime' }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ field: 'startTime' })]),
       );
     });
 
@@ -153,9 +147,7 @@ describe('POST /appointments (Contract)', () => {
         .expect(400);
 
       expect(response.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ field: 'endTime' }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ field: 'endTime' })]),
       );
     });
 

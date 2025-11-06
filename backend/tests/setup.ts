@@ -5,7 +5,8 @@
 
 // Set test environment variables
 process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/patient_studio_test?schema=public';
+process.env.DATABASE_URL =
+  'postgresql://postgres:postgres@localhost:5432/patient_studio_test?schema=public';
 process.env.JWT_SECRET = 'test-secret-key-do-not-use-in-production';
 
 // Mock AWS SDK clients for unit tests

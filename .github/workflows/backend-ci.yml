@@ -37,7 +37,7 @@ jobs:
         run: npm run lint
 
       - name: Check formatting
-        run: npx prettier --check "src/**/*.ts" "test/**/*.ts"
+        run: npx prettier --check "src/**/*.ts"
 
   test:
     name: Unit & Integration Tests
