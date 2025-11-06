@@ -3,7 +3,7 @@
 **Input**: Design documents from `/specs/001-simplified-mvp/`
 **Prerequisites**: plan.md, spec.md, data-model.md, research.md, contracts/
 
-**Tests**: Tests are not included by default. Implementation tasks include validation checkpoints per user story.
+**Tests**: Per Constitution Principle IV (Test-First for Healthcare), test tasks are included for all PHI-handling features and MUST be written before implementation to ensure they FAIL first (Red-Green-Refactor cycle).
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -42,7 +42,8 @@
 - [ ] T015 [P] Create GitHub Actions workflow for backend CI in .github/workflows/backend-ci.yml
 - [ ] T016 [P] Create GitHub Actions workflow for frontend CI in .github/workflows/frontend-ci.yml
 - [ ] T017 [P] Initialize Terraform structure for AWS infrastructure in infrastructure/terraform/
-- [ ] T018 [P] Create root README.md with quickstart instructions
+- [ ] T018 [P] Configure RDS automated backups in infrastructure/terraform/modules/rds/main.tf (30-day retention, PITR enabled, Multi-AZ) per FR-057
+- [ ] T019 [P] Create root README.md with quickstart instructions
 
 ---
 
@@ -54,54 +55,61 @@
 
 ### Database & ORM
 
-- [ ] T019 Initialize Prisma in backend/prisma/schema.prisma with base schema structure
-- [ ] T020 Define Tenant model in backend/prisma/schema.prisma per data-model.md
-- [ ] T021 [P] Define User model in backend/prisma/schema.prisma per data-model.md
-- [ ] T022 [P] Define Practitioner model in backend/prisma/schema.prisma per data-model.md
-- [ ] T023 [P] Define Patient model (basic fields) in backend/prisma/schema.prisma per data-model.md
-- [ ] T024 [P] Define AuditEvent model in backend/prisma/schema.prisma per data-model.md
-- [ ] T025 Create initial Prisma migration in backend/prisma/migrations/
-- [ ] T026 [P] Create RLS policy SQL scripts in backend/database/rls-policies/01-enable-rls.sql
-- [ ] T027 [P] Create tenant isolation policy scripts in backend/database/rls-policies/02-tenant-isolation.sql
-- [ ] T028 Apply RLS policies to PostgreSQL database
+- [ ] T020 Initialize Prisma in backend/prisma/schema.prisma with base schema structure
+- [ ] T021 Define Tenant model in backend/prisma/schema.prisma per data-model.md
+- [ ] T022 [P] Define User model in backend/prisma/schema.prisma per data-model.md
+- [ ] T023 [P] Define Practitioner model in backend/prisma/schema.prisma per data-model.md
+- [ ] T024 [P] Define Patient model (basic fields) in backend/prisma/schema.prisma per data-model.md
+- [ ] T025 [P] Define AuditEvent model in backend/prisma/schema.prisma per data-model.md
+- [ ] T026 Create initial Prisma migration in backend/prisma/migrations/
+- [ ] T027 [P] Create RLS policy SQL scripts in backend/database/rls-policies/01-enable-rls.sql
+- [ ] T028 [P] Create tenant isolation policy scripts in backend/database/rls-policies/02-tenant-isolation.sql
+- [ ] T029 Apply RLS policies to PostgreSQL database
 
 ### Authentication & Authorization
 
-- [ ] T029 Install Auth0 SDK and configure in backend/src/config/auth.config.ts
-- [ ] T030 Create Auth0 authentication strategy in backend/src/modules/auth/strategies/auth0.strategy.ts
-- [ ] T031 Create JWT authentication guard in backend/src/modules/auth/guards/jwt-auth.guard.ts
-- [ ] T032 [P] Create RBAC guard for role-based access control in backend/src/modules/auth/guards/rbac.guard.ts
-- [ ] T033 [P] Create tenant context interceptor in backend/src/common/interceptors/tenant-context.interceptor.ts
-- [ ] T034 Create authentication module in backend/src/modules/auth/auth.module.ts
-- [ ] T035 [P] Create authentication controller in backend/src/modules/auth/auth.controller.ts
-- [ ] T036 [P] Create authentication service in backend/src/modules/auth/auth.service.ts
+- [ ] T030 Install Auth0 SDK and configure in backend/src/config/auth.config.ts
+- [ ] T031 Create Auth0 authentication strategy in backend/src/modules/auth/strategies/auth0.strategy.ts
+- [ ] T032 Create JWT authentication guard in backend/src/modules/auth/guards/jwt-auth.guard.ts
+- [ ] T033 [P] Create RBAC guard for role-based access control in backend/src/modules/auth/guards/rbac.guard.ts
+- [ ] T034 [P] Create tenant context interceptor in backend/src/common/interceptors/tenant-context.interceptor.ts
+- [ ] T035 Create authentication module in backend/src/modules/auth/auth.module.ts
+- [ ] T036 [P] Create authentication controller in backend/src/modules/auth/auth.controller.ts
+- [ ] T037 [P] Create authentication service in backend/src/modules/auth/auth.service.ts
+- [ ] T038 [P] Create patient authentication service for magic link/OTP in backend/src/modules/auth/patient-auth.service.ts per FR-002
+- [ ] T039 [P] Implement magic link generation and validation with expiry (15-minute TTL)
+- [ ] T040 [P] Implement OTP generation and validation (6-digit code, 5-minute TTL)
+- [ ] T041 [P] Create email service integration for magic link/OTP delivery in backend/src/modules/notifications/email.service.ts
 
 ### Security & Compliance
 
-- [ ] T037 Create encryption service using AWS KMS in backend/src/common/encryption/encryption.service.ts per research.md
-- [ ] T038 [P] Create audit logging service in backend/src/modules/audit/audit.service.ts per research.md
-- [ ] T039 [P] Create audit logging interceptor in backend/src/modules/audit/audit.interceptor.ts
-- [ ] T040 Create rate limiting guard in backend/src/common/guards/rate-limit.guard.ts
-- [ ] T041 Configure CloudWatch logging with Winston in backend/src/config/logger.config.ts
+- [ ] T042 Create encryption service using AWS KMS in backend/src/common/encryption/encryption.service.ts per research.md
+- [ ] T043 [P] Create audit logging service in backend/src/modules/audit/audit.service.ts per research.md
+- [ ] T044 [P] Create audit logging interceptor in backend/src/modules/audit/audit.interceptor.ts
+- [ ] T045 Create rate limiting guard in backend/src/common/guards/rate-limit.guard.ts
+- [ ] T046 Configure CloudWatch logging with Winston in backend/src/config/logger.config.ts
+- [ ] T047 [P] Install and configure Sentry SDK in backend/src/config/sentry.config.ts for error tracking per FR-054
+- [ ] T048 [P] Setup SendGrid SDK and email templates in backend/src/modules/notifications/ with BAA verification per research.md
+- [ ] T049 [P] Configure CloudWatch alarms for cost monitoring at 80% and 100% thresholds per FR-055
 
 ### API Infrastructure
 
-- [ ] T042 Create main NestJS application in backend/src/main.ts with middleware pipeline
-- [ ] T043 Create app module in backend/src/app.module.ts with all module imports
-- [ ] T044 [P] Create global exception filter in backend/src/common/filters/http-exception.filter.ts
-- [ ] T045 [P] Create validation pipe in backend/src/common/pipes/validation.pipe.ts
-- [ ] T046 Setup API documentation with Swagger in backend/src/config/swagger.config.ts
+- [ ] T050 Create main NestJS application in backend/src/main.ts with middleware pipeline
+- [ ] T051 Create app module in backend/src/app.module.ts with all module imports
+- [ ] T052 [P] Create global exception filter in backend/src/common/filters/http-exception.filter.ts
+- [ ] T053 [P] Create validation pipe in backend/src/common/pipes/validation.pipe.ts
+- [ ] T054 Setup API documentation with Swagger in backend/src/config/swagger.config.ts
 
 ### Frontend Foundation
 
-- [ ] T047 Setup Next.js app router structure in frontend/src/app/
-- [ ] T048 [P] Create root layout component in frontend/src/app/layout.tsx
-- [ ] T049 [P] Configure Auth0 for frontend in frontend/src/lib/auth/auth0.ts
-- [ ] T050 [P] Create authentication context provider in frontend/src/lib/auth/AuthProvider.tsx
-- [ ] T051 [P] Setup Zustand stores structure in frontend/src/stores/
-- [ ] T052 [P] Create API client with React Query in frontend/src/lib/api/client.ts
-- [ ] T053 [P] Setup shadcn/ui components in frontend/src/components/ui/
-- [ ] T054 [P] Configure Tailwind CSS in frontend/tailwind.config.ts
+- [ ] T055 Setup Next.js app router structure in frontend/src/app/
+- [ ] T056 [P] Create root layout component in frontend/src/app/layout.tsx
+- [ ] T057 [P] Configure Auth0 for frontend in frontend/src/lib/auth/auth0.ts
+- [ ] T058 [P] Create authentication context provider in frontend/src/lib/auth/AuthProvider.tsx
+- [ ] T059 [P] Setup Zustand stores structure in frontend/src/stores/
+- [ ] T060 [P] Create API client with React Query in frontend/src/lib/api/client.ts
+- [ ] T061 [P] Setup shadcn/ui components in frontend/src/components/ui/
+- [ ] T062 [P] Configure Tailwind CSS in frontend/tailwind.config.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -115,29 +123,41 @@
 
 **Dependencies**: Requires Patient and Practitioner models from foundational phase
 
+### Test Tasks (Write First - MUST FAIL Before Implementation)
+
+- [ ] T063 [P] [US1] Write contract test for GET /appointments/availability endpoint in backend/tests/contract/appointments-availability.contract.spec.ts
+- [ ] T064 [P] [US1] Write contract test for POST /appointments endpoint in backend/tests/contract/appointments-create.contract.spec.ts
+- [ ] T065 [P] [US1] Write integration test for appointment booking with optimistic locking in backend/tests/integration/appointments-booking.spec.ts
+- [ ] T066 [P] [US1] Write integration test for double-booking prevention in backend/tests/integration/appointments-concurrency.spec.ts
+- [ ] T067 [P] [US1] Write integration test for tenant isolation on appointments in backend/tests/integration/appointments-tenant-isolation.spec.ts
+
 ### Backend Implementation
 
-- [ ] T055 [P] [US1] Define Appointment model in backend/prisma/schema.prisma with optimistic locking
-- [ ] T056 [US1] Create and apply Appointment migration in backend/prisma/migrations/
-- [ ] T057 [P] [US1] Create appointment DTOs in backend/src/modules/appointments/dto/
-- [ ] T058 [P] [US1] Create AppointmentService in backend/src/modules/appointments/appointments.service.ts
-- [ ] T059 [P] [US1] Implement availability query logic with practitioner hours filtering
-- [ ] T060 [P] [US1] Implement appointment booking with optimistic locking (version control)
-- [ ] T061 [P] [US1] Implement email confirmation service in backend/src/modules/notifications/email.service.ts
-- [ ] T062 [US1] Create AppointmentController in backend/src/modules/appointments/appointments.controller.ts
-- [ ] T063 [US1] Add appointment endpoints: GET /appointments/availability, POST /appointments
-- [ ] T064 [P] [US1] Add validation for 2-hour minimum booking window
-- [ ] T065 [P] [US1] Add audit logging for appointment creation
-- [ ] T066 [US1] Create Appointments module in backend/src/modules/appointments/appointments.module.ts
+- [ ] T068 [P] [US1] Define Appointment model in backend/prisma/schema.prisma with optimistic locking
+- [ ] T069 [US1] Create and apply Appointment migration in backend/prisma/migrations/
+- [ ] T070 [P] [US1] Create appointment DTOs in backend/src/modules/appointments/dto/
+- [ ] T071 [P] [US1] Create AppointmentService in backend/src/modules/appointments/appointments.service.ts
+- [ ] T072 [P] [US1] Implement availability query logic with practitioner hours filtering
+- [ ] T073 [P] [US1] Implement appointment booking with optimistic locking (version control)
+- [ ] T074 [P] [US1] Implement email confirmation service in backend/src/modules/notifications/email.service.ts
+- [ ] T075 [P] [US1] Create reminder scheduling service using SQS in backend/src/modules/notifications/reminder.service.ts per FR-015
+- [ ] T076 [P] [US1] Implement Lambda function for reminder processing in infrastructure/lambda/appointment-reminders/
+- [ ] T077 [P] [US1] Create reminder email templates (48h and 2h before appointment) in backend/src/modules/notifications/templates/
+- [ ] T078 [P] [US1] Configure SQS queue and Lambda trigger in infrastructure/terraform/modules/reminders/
+- [ ] T079 [US1] Create AppointmentController in backend/src/modules/appointments/appointments.controller.ts
+- [ ] T080 [US1] Add appointment endpoints: GET /appointments/availability, POST /appointments
+- [ ] T081 [P] [US1] Add validation for 2-hour minimum booking window
+- [ ] T082 [P] [US1] Add audit logging for appointment creation
+- [ ] T083 [US1] Create Appointments module in backend/src/modules/appointments/appointments.module.ts
 
 ### Frontend Implementation
 
-- [ ] T067 [P] [US1] Create appointment booking page in frontend/src/app/(patient)/appointments/book/page.tsx
-- [ ] T068 [P] [US1] Create availability calendar component in frontend/src/components/appointments/AvailabilityCalendar.tsx
-- [ ] T069 [P] [US1] Create time slot selector component in frontend/src/components/appointments/TimeSlotSelector.tsx
-- [ ] T070 [P] [US1] Create booking confirmation modal in frontend/src/components/appointments/BookingConfirmation.tsx
-- [ ] T071 [US1] Create appointment API hooks in frontend/src/lib/api/appointments.ts
-- [ ] T072 [US1] Implement booking flow with error handling for concurrent bookings
+- [ ] T084 [P] [US1] Create appointment booking page in frontend/src/app/(patient)/appointments/book/page.tsx
+- [ ] T085 [P] [US1] Create availability calendar component in frontend/src/components/appointments/AvailabilityCalendar.tsx
+- [ ] T086 [P] [US1] Create time slot selector component in frontend/src/components/appointments/TimeSlotSelector.tsx
+- [ ] T087 [P] [US1] Create booking confirmation modal in frontend/src/components/appointments/BookingConfirmation.tsx
+- [ ] T088 [US1] Create appointment API hooks in frontend/src/lib/api/appointments.ts
+- [ ] T089 [US1] Implement booking flow with error handling for concurrent bookings
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - patients can book appointments, double-booking is prevented, confirmations are sent
 
@@ -153,27 +173,27 @@
 
 ### Backend Implementation
 
-- [ ] T073 [P] [US2] Define WaitlistEntry model in backend/prisma/schema.prisma
-- [ ] T074 [US2] Create and apply Waitlist migration in backend/prisma/migrations/
-- [ ] T075 [P] [US2] Create PractitionerService in backend/src/modules/practitioners/practitioners.service.ts
-- [ ] T076 [P] [US2] Implement available hours management (JSON field update)
-- [ ] T077 [P] [US2] Create WaitlistService in backend/src/modules/waitlist/waitlist.service.ts
-- [ ] T078 [P] [US2] Implement waitlist notification logic (1-hour claim window)
-- [ ] T079 [P] [US2] Implement appointment cancellation with waitlist trigger
-- [ ] T080 [P] [US2] Implement iCal feed generation in backend/src/modules/calendar/calendar.service.ts
-- [ ] T081 [US2] Create PractitionerController in backend/src/modules/practitioners/practitioners.controller.ts
-- [ ] T082 [US2] Add practitioner endpoints: PATCH /practitioners/:id/hours, GET /calendar/export
-- [ ] T083 [US2] Add waitlist endpoints: POST /appointments/waitlist, GET /appointments/waitlist
-- [ ] T084 [US2] Create Practitioners and Calendar modules
+- [ ] T090 [P] [US2] Define WaitlistEntry model in backend/prisma/schema.prisma
+- [ ] T091 [US2] Create and apply Waitlist migration in backend/prisma/migrations/
+- [ ] T092 [P] [US2] Create PractitionerService in backend/src/modules/practitioners/practitioners.service.ts
+- [ ] T093 [P] [US2] Implement available hours management (JSON field update)
+- [ ] T094 [P] [US2] Create WaitlistService in backend/src/modules/waitlist/waitlist.service.ts
+- [ ] T095 [P] [US2] Implement waitlist notification logic (1-hour claim window)
+- [ ] T096 [P] [US2] Implement appointment cancellation with waitlist trigger
+- [ ] T097 [P] [US2] Implement iCal feed generation in backend/src/modules/calendar/calendar.service.ts
+- [ ] T098 [US2] Create PractitionerController in backend/src/modules/practitioners/practitioners.controller.ts
+- [ ] T099 [US2] Add practitioner endpoints: PATCH /practitioners/:id/hours, GET /calendar/export
+- [ ] T100 [US2] Add waitlist endpoints: POST /appointments/waitlist, GET /appointments/waitlist
+- [ ] T101 [US2] Create Practitioners and Calendar modules
 
 ### Frontend Implementation
 
-- [ ] T085 [P] [US2] Create practitioner calendar page in frontend/src/app/(practitioner)/calendar/page.tsx
-- [ ] T086 [P] [US2] Create full calendar component in frontend/src/components/calendar/FullCalendar.tsx
-- [ ] T087 [P] [US2] Create availability settings modal in frontend/src/components/practitioners/AvailabilitySettings.tsx
-- [ ] T088 [P] [US2] Create waitlist management panel in frontend/src/components/waitlist/WaitlistPanel.tsx
-- [ ] T089 [US2] Create practitioner API hooks in frontend/src/lib/api/practitioners.ts
-- [ ] T090 [US2] Implement calendar export link display
+- [ ] T102 [P] [US2] Create practitioner calendar page in frontend/src/app/(practitioner)/calendar/page.tsx
+- [ ] T103 [P] [US2] Create full calendar component in frontend/src/components/calendar/FullCalendar.tsx
+- [ ] T104 [P] [US2] Create availability settings modal in frontend/src/components/practitioners/AvailabilitySettings.tsx
+- [ ] T105 [P] [US2] Create waitlist management panel in frontend/src/components/waitlist/WaitlistPanel.tsx
+- [ ] T106 [US2] Create practitioner API hooks in frontend/src/lib/api/practitioners.ts
+- [ ] T107 [US2] Implement calendar export link display
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - patients book, practitioners manage schedules and waitlists
 
@@ -187,30 +207,38 @@
 
 **Dependencies**: Requires Appointment model from US1
 
+### Test Tasks (Write First - MUST FAIL Before Implementation)
+
+- [ ] T108 [P] [US3] Write contract test for POST /notes endpoint in backend/tests/contract/notes-create.contract.spec.ts
+- [ ] T109 [P] [US3] Write contract test for POST /notes/ai-complete endpoint in backend/tests/contract/notes-ai.contract.spec.ts
+- [ ] T110 [P] [US3] Write integration test for SOAP note encryption/decryption in backend/tests/integration/notes-encryption.spec.ts
+- [ ] T111 [P] [US3] Write integration test for note versioning and audit trail in backend/tests/integration/notes-versioning.spec.ts
+- [ ] T112 [P] [US3] Write unit test for PHI de-identification logic in backend/tests/unit/ai-service-phi-deidentification.spec.ts
+
 ### Backend Implementation
 
-- [ ] T091 [P] [US3] Define ClinicalNote model with encrypted fields in backend/prisma/schema.prisma
-- [ ] T092 [US3] Create and apply ClinicalNote migration in backend/prisma/migrations/
-- [ ] T093 [P] [US3] Create OpenAI service integration in backend/src/modules/clinical-notes/ai.service.ts per research.md
-- [ ] T094 [P] [US3] Implement PHI de-identification for AI requests
-- [ ] T095 [P] [US3] Implement AI autocompletion with rate limiting (20 req/min per user)
-- [ ] T096 [P] [US3] Create PDF generation service in backend/src/modules/clinical-notes/pdf.service.ts
-- [ ] T097 [P] [US3] Create ClinicalNotesService in backend/src/modules/clinical-notes/notes.service.ts
-- [ ] T098 [P] [US3] Implement note versioning and audit trail
-- [ ] T099 [P] [US3] Implement note encryption/decryption with per-tenant keys
-- [ ] T100 [US3] Create ClinicalNotesController in backend/src/modules/clinical-notes/notes.controller.ts
-- [ ] T101 [US3] Add notes endpoints: POST /notes, PATCH /notes/:id, POST /notes/ai-complete, GET /notes/:id/pdf
-- [ ] T102 [US3] Create ClinicalNotes module
-- [ ] T103 [P] [US3] Add validation: notes only for past appointments
+- [ ] T113 [P] [US3] Define ClinicalNote model with encrypted fields in backend/prisma/schema.prisma
+- [ ] T114 [US3] Create and apply ClinicalNote migration in backend/prisma/migrations/
+- [ ] T115 [P] [US3] Create OpenAI service integration in backend/src/modules/clinical-notes/ai.service.ts per research.md
+- [ ] T116 [P] [US3] Implement PHI de-identification for AI requests
+- [ ] T117 [P] [US3] Implement AI autocompletion with rate limiting (20 req/min per user)
+- [ ] T118 [P] [US3] Create PDF generation service in backend/src/modules/clinical-notes/pdf.service.ts
+- [ ] T119 [P] [US3] Create ClinicalNotesService in backend/src/modules/clinical-notes/notes.service.ts
+- [ ] T120 [P] [US3] Implement note versioning and audit trail
+- [ ] T121 [P] [US3] Implement note encryption/decryption with per-tenant keys
+- [ ] T122 [US3] Create ClinicalNotesController in backend/src/modules/clinical-notes/notes.controller.ts
+- [ ] T123 [US3] Add notes endpoints: POST /notes, PATCH /notes/:id, POST /notes/ai-complete, GET /notes/:id/pdf
+- [ ] T124 [US3] Create ClinicalNotes module
+- [ ] T125 [P] [US3] Add validation: notes only for past appointments
 
 ### Frontend Implementation
 
-- [ ] T104 [P] [US3] Create SOAP note editor page in frontend/src/app/(practitioner)/notes/[appointmentId]/page.tsx
-- [ ] T105 [P] [US3] Create SOAP template component in frontend/src/components/notes/SoapTemplate.tsx
-- [ ] T106 [P] [US3] Create AI autocompletion UI with keyboard shortcut in frontend/src/components/notes/AIAssistant.tsx
-- [ ] T107 [P] [US3] Create note version history component in frontend/src/components/notes/VersionHistory.tsx
-- [ ] T108 [US3] Create clinical notes API hooks in frontend/src/lib/api/notes.ts
-- [ ] T109 [US3] Implement note save with optimistic updates
+- [ ] T126 [P] [US3] Create SOAP note editor page in frontend/src/app/(practitioner)/notes/[appointmentId]/page.tsx
+- [ ] T127 [P] [US3] Create SOAP template component in frontend/src/components/notes/SoapTemplate.tsx
+- [ ] T128 [P] [US3] Create AI autocompletion UI with keyboard shortcut in frontend/src/components/notes/AIAssistant.tsx
+- [ ] T129 [P] [US3] Create note version history component in frontend/src/components/notes/VersionHistory.tsx
+- [ ] T130 [US3] Create clinical notes API hooks in frontend/src/lib/api/notes.ts
+- [ ] T131 [US3] Implement note save with optimistic updates
 
 **Checkpoint**: All three user stories (booking, calendar, notes) should now be independently functional
 
@@ -224,30 +252,37 @@
 
 **Dependencies**: Requires Appointment model from US1
 
+### Test Tasks (Write First - MUST FAIL Before Implementation)
+
+- [ ] T132 [P] [US4] Write contract test for POST /invoices endpoint in backend/tests/contract/invoices-create.contract.spec.ts
+- [ ] T133 [P] [US4] Write contract test for POST /webhooks/stripe endpoint in backend/tests/contract/stripe-webhook.contract.spec.ts
+- [ ] T134 [P] [US4] Write integration test for Stripe payment flow in backend/tests/integration/billing-payment.spec.ts
+- [ ] T135 [P] [US4] Write integration test for invoice audit logging in backend/tests/integration/billing-audit.spec.ts
+
 ### Backend Implementation
 
-- [ ] T110 [P] [US4] Define Invoice model in backend/prisma/schema.prisma
-- [ ] T111 [US4] Create and apply Invoice migration in backend/prisma/migrations/
-- [ ] T112 [P] [US4] Install Stripe SDK and configure in backend/src/config/stripe.config.ts
-- [ ] T113 [P] [US4] Create StripeService in backend/src/modules/billing/stripe.service.ts per research.md
-- [ ] T114 [P] [US4] Implement invoice creation from completed appointments
-- [ ] T115 [P] [US4] Implement Stripe payment intent creation
-- [ ] T116 [P] [US4] Implement Stripe webhook handler for payment events
-- [ ] T117 [P] [US4] Create BillingService in backend/src/modules/billing/billing.service.ts
-- [ ] T118 [P] [US4] Implement CSV export with anonymization option
-- [ ] T119 [US4] Create BillingController in backend/src/modules/billing/billing.controller.ts
-- [ ] T120 [US4] Add billing endpoints: POST /invoices, GET /invoices/:id, POST /webhooks/stripe, GET /invoices/export
-- [ ] T121 [US4] Create Billing module
-- [ ] T122 [P] [US4] Add audit logging for all payment events
+- [ ] T136 [P] [US4] Define Invoice model in backend/prisma/schema.prisma
+- [ ] T137 [US4] Create and apply Invoice migration in backend/prisma/migrations/
+- [ ] T138 [P] [US4] Install Stripe SDK and configure in backend/src/config/stripe.config.ts
+- [ ] T139 [P] [US4] Create StripeService in backend/src/modules/billing/stripe.service.ts per research.md
+- [ ] T140 [P] [US4] Implement invoice creation from completed appointments
+- [ ] T141 [P] [US4] Implement Stripe payment intent creation
+- [ ] T142 [P] [US4] Implement Stripe webhook handler for payment events
+- [ ] T143 [P] [US4] Create BillingService in backend/src/modules/billing/billing.service.ts
+- [ ] T144 [P] [US4] Implement CSV export with anonymization option
+- [ ] T145 [US4] Create BillingController in backend/src/modules/billing/billing.controller.ts
+- [ ] T146 [US4] Add billing endpoints: POST /invoices, GET /invoices/:id, POST /webhooks/stripe, GET /invoices/export
+- [ ] T147 [US4] Create Billing module
+- [ ] T148 [P] [US4] Add audit logging for all payment events
 
 ### Frontend Implementation
 
-- [ ] T123 [P] [US4] Create invoice list page in frontend/src/app/(practitioner)/billing/page.tsx
-- [ ] T124 [P] [US4] Create invoice details component in frontend/src/components/billing/InvoiceDetails.tsx
-- [ ] T125 [P] [US4] Create Stripe payment form using Stripe Elements in frontend/src/components/billing/PaymentForm.tsx
-- [ ] T126 [P] [US4] Create billing export modal in frontend/src/components/billing/ExportModal.tsx
-- [ ] T127 [US4] Create billing API hooks in frontend/src/lib/api/billing.ts
-- [ ] T128 [US4] Implement payment success/failure handling
+- [ ] T149 [P] [US4] Create invoice list page in frontend/src/app/(practitioner)/billing/page.tsx
+- [ ] T150 [P] [US4] Create invoice details component in frontend/src/components/billing/InvoiceDetails.tsx
+- [ ] T151 [P] [US4] Create Stripe payment form using Stripe Elements in frontend/src/components/billing/PaymentForm.tsx
+- [ ] T152 [P] [US4] Create billing export modal in frontend/src/components/billing/ExportModal.tsx
+- [ ] T153 [US4] Create billing API hooks in frontend/src/lib/api/billing.ts
+- [ ] T154 [US4] Implement payment success/failure handling
 
 **Checkpoint**: Four user stories complete - full booking, scheduling, documentation, and payment flows functional
 
@@ -261,31 +296,38 @@
 
 **Dependencies**: Extends Patient model from foundational phase
 
+### Test Tasks (Write First - MUST FAIL Before Implementation)
+
+- [ ] T155 [P] [US5] Write contract test for POST /patients endpoint in backend/tests/contract/patients-create.contract.spec.ts
+- [ ] T156 [P] [US5] Write contract test for POST /patients/:id/allergies endpoint in backend/tests/contract/patients-allergies.contract.spec.ts
+- [ ] T157 [P] [US5] Write integration test for patient data tenant isolation in backend/tests/integration/patients-tenant-isolation.spec.ts
+- [ ] T158 [P] [US5] Write integration test for allergy/medication audit logging in backend/tests/integration/patients-audit.spec.ts
+
 ### Backend Implementation
 
-- [ ] T129 [P] [US5] Define Allergy model in backend/prisma/schema.prisma
-- [ ] T130 [P] [US5] Define Medication model in backend/prisma/schema.prisma
-- [ ] T131 [US5] Create and apply Patient safety fields migration in backend/prisma/migrations/
-- [ ] T132 [P] [US5] Update Patient model to include emergency contact fields
-- [ ] T133 [P] [US5] Create PatientService in backend/src/modules/patients/patients.service.ts
-- [ ] T134 [P] [US5] Implement patient CRUD operations with tenant isolation
-- [ ] T135 [P] [US5] Implement allergy management endpoints
-- [ ] T136 [P] [US5] Implement medication management endpoints
-- [ ] T137 [P] [US5] Add validation for required patient registration fields
-- [ ] T138 [US5] Create PatientController in backend/src/modules/patients/patients.controller.ts
-- [ ] T139 [US5] Add patient endpoints: POST /patients, GET /patients/:id, PATCH /patients/:id, POST /patients/:id/allergies, POST /patients/:id/medications
-- [ ] T140 [US5] Create Patients module
-- [ ] T141 [P] [US5] Add audit logging for patient data access
+- [ ] T159 [P] [US5] Define Allergy model in backend/prisma/schema.prisma
+- [ ] T160 [P] [US5] Define Medication model in backend/prisma/schema.prisma
+- [ ] T161 [US5] Create and apply Patient safety fields migration in backend/prisma/migrations/
+- [ ] T162 [P] [US5] Update Patient model to include emergency contact fields
+- [ ] T163 [P] [US5] Create PatientService in backend/src/modules/patients/patients.service.ts
+- [ ] T164 [P] [US5] Implement patient CRUD operations with tenant isolation
+- [ ] T165 [P] [US5] Implement allergy management endpoints
+- [ ] T166 [P] [US5] Implement medication management endpoints
+- [ ] T167 [P] [US5] Add validation for required patient registration fields
+- [ ] T168 [US5] Create PatientController in backend/src/modules/patients/patients.controller.ts
+- [ ] T169 [US5] Add patient endpoints: POST /patients, GET /patients/:id, PATCH /patients/:id, POST /patients/:id/allergies, POST /patients/:id/medications
+- [ ] T170 [US5] Create Patients module
+- [ ] T171 [P] [US5] Add audit logging for patient data access
 
 ### Frontend Implementation
 
-- [ ] T142 [P] [US5] Create patient registration page in frontend/src/app/(patient)/register/page.tsx
-- [ ] T143 [P] [US5] Create patient profile form in frontend/src/components/patients/ProfileForm.tsx
-- [ ] T144 [P] [US5] Create allergy input component with severity selector in frontend/src/components/patients/AllergyInput.tsx
-- [ ] T145 [P] [US5] Create medication input component in frontend/src/components/patients/MedicationInput.tsx
-- [ ] T146 [P] [US5] Create patient details view with allergy warnings in frontend/src/components/patients/PatientDetails.tsx
-- [ ] T147 [US5] Create patient API hooks in frontend/src/lib/api/patients.ts
-- [ ] T148 [US5] Implement patient profile validation
+- [ ] T172 [P] [US5] Create patient registration page in frontend/src/app/(patient)/register/page.tsx
+- [ ] T173 [P] [US5] Create patient profile form in frontend/src/components/patients/ProfileForm.tsx
+- [ ] T174 [P] [US5] Create allergy input component with severity selector in frontend/src/components/patients/AllergyInput.tsx
+- [ ] T175 [P] [US5] Create medication input component in frontend/src/components/patients/MedicationInput.tsx
+- [ ] T176 [P] [US5] Create patient details view with allergy warnings in frontend/src/components/patients/PatientDetails.tsx
+- [ ] T177 [US5] Create patient API hooks in frontend/src/lib/api/patients.ts
+- [ ] T178 [US5] Implement patient profile validation
 
 **Checkpoint**: Five user stories complete - full patient safety tracking integrated with existing booking flows
 
@@ -299,28 +341,37 @@
 
 **Dependencies**: Cross-cutting enhancements to all previous user stories
 
+### Test Tasks (Write First - MUST FAIL Before Implementation)
+
+- [ ] T179 [P] [US6] Write integration test for MFA enforcement on practitioner login in backend/tests/integration/auth-mfa.spec.ts
+- [ ] T180 [P] [US6] Write integration test for session timeout enforcement in backend/tests/integration/auth-session-timeout.spec.ts
+- [ ] T181 [P] [US6] Write integration test for failed login lockout in backend/tests/integration/auth-login-lockout.spec.ts
+- [ ] T182 [P] [US6] Write integration test for SSN field-level encryption in backend/tests/integration/encryption-ssn.spec.ts
+- [ ] T183 [P] [US6] Write integration test for soft delete with audit trail in backend/tests/integration/soft-delete-audit.spec.ts
+- [ ] T184 [P] [US6] Write security test for cross-tenant data access prevention in backend/tests/security/tenant-isolation-penetration.spec.ts
+
 ### Backend Enhancements
 
-- [ ] T149 [P] [US6] Enable MFA enforcement in Auth0 configuration
-- [ ] T150 [P] [US6] Implement session timeout middleware (15 min inactivity, 8 hour absolute)
-- [ ] T151 [P] [US6] Add failed login attempt tracking (5 per 15 min lockout)
-- [ ] T152 [P] [US6] Create SSN field-level encryption middleware
-- [ ] T153 [P] [US6] Implement soft delete for all PHI-containing models
-- [ ] T154 [P] [US6] Create data retention policy enforcement scripts
-- [ ] T155 [P] [US6] Setup CloudWatch log groups with retention lock
-- [ ] T156 [P] [US6] Configure S3 Glacier archival for audit logs
-- [ ] T157 [P] [US6] Add AWS WAF rules for OWASP Top 10 protection
-- [ ] T158 [P] [US6] Create backup and restore scripts for PostgreSQL
-- [ ] T159 [P] [US6] Implement point-in-time recovery testing
-- [ ] T160 [US6] Create compliance verification tests in backend/tests/security/
-- [ ] T161 [US6] Document BAA requirements checklist in docs/compliance/baas.md
+- [ ] T185 [P] [US6] Enable MFA enforcement in Auth0 configuration
+- [ ] T186 [P] [US6] Implement session timeout middleware (15 min inactivity, 8 hour absolute)
+- [ ] T187 [P] [US6] Add failed login attempt tracking (5 per 15 min lockout)
+- [ ] T188 [P] [US6] Create SSN field-level encryption middleware
+- [ ] T189 [P] [US6] Implement soft delete for all PHI-containing models
+- [ ] T190 [P] [US6] Create data retention policy enforcement scripts
+- [ ] T191 [P] [US6] Setup CloudWatch log groups with retention lock
+- [ ] T192 [P] [US6] Configure S3 Glacier archival for audit logs
+- [ ] T193 [P] [US6] Add AWS WAF rules for OWASP Top 10 protection
+- [ ] T194 [P] [US6] Create backup and restore scripts for PostgreSQL
+- [ ] T195 [P] [US6] Implement point-in-time recovery testing
+- [ ] T196 [US6] Create compliance verification tests in backend/tests/security/
+- [ ] T197 [US6] Document BAA requirements checklist in docs/compliance/baas.md
 
 ### Frontend Enhancements
 
-- [ ] T162 [P] [US6] Add MFA enrollment flow in frontend/src/app/(auth)/mfa/page.tsx
-- [ ] T163 [P] [US6] Implement session timeout warning modal
-- [ ] T164 [P] [US6] Add client-side activity tracking for session management
-- [ ] T165 [US6] Create compliance documentation page in frontend/src/app/(practitioner)/compliance/page.tsx
+- [ ] T198 [P] [US6] Add MFA enrollment flow in frontend/src/app/(auth)/mfa/page.tsx
+- [ ] T199 [P] [US6] Implement session timeout warning modal
+- [ ] T200 [P] [US6] Add client-side activity tracking for session management
+- [ ] T201 [US6] Create compliance documentation page in frontend/src/app/(practitioner)/compliance/page.tsx
 
 **Checkpoint**: All six user stories complete with comprehensive HIPAA compliance measures
 
@@ -330,23 +381,23 @@
 
 **Purpose**: Final improvements that affect multiple user stories
 
-- [ ] T166 [P] Add comprehensive error messages across all API endpoints
-- [ ] T167 [P] Implement loading states for all async operations in frontend
-- [ ] T168 [P] Add optimistic UI updates across all mutation operations
-- [ ] T169 [P] Create user onboarding tutorial flow in frontend
-- [ ] T170 [P] Implement search functionality for patients list
-- [ ] T171 [P] Add filtering and sorting to appointment calendar
-- [ ] T172 [P] Create practitioner dashboard with KPIs in frontend/src/app/(practitioner)/dashboard/page.tsx
-- [ ] T173 [P] Add patient dashboard in frontend/src/app/(patient)/dashboard/page.tsx
-- [ ] T174 [P] Implement notification preferences management
-- [ ] T175 [P] Add email template customization for practice branding
-- [ ] T176 [P] Create comprehensive API documentation in docs/api/
-- [ ] T177 [P] Create deployment guide in docs/deployment/
-- [ ] T178 [P] Run security vulnerability scan with npm audit
-- [ ] T179 [P] Run performance audit on critical pages
-- [ ] T180 [P] Validate all quickstart.md testing scenarios
-- [ ] T181 Code cleanup and refactoring across backend and frontend
-- [ ] T182 Final integration testing across all user stories
+- [ ] T202 [P] Add comprehensive error messages across all API endpoints
+- [ ] T203 [P] Implement loading states for all async operations in frontend
+- [ ] T204 [P] Add optimistic UI updates across all mutation operations
+- [ ] T205 [P] Create user onboarding tutorial flow in frontend
+- [ ] T206 [P] Implement search functionality for patients list
+- [ ] T207 [P] Add filtering and sorting to appointment calendar
+- [ ] T208 [P] Create practitioner dashboard with KPIs in frontend/src/app/(practitioner)/dashboard/page.tsx
+- [ ] T209 [P] Add patient dashboard in frontend/src/app/(patient)/dashboard/page.tsx
+- [ ] T210 [P] Implement notification preferences management
+- [ ] T211 [P] Add email template customization for practice branding
+- [ ] T212 [P] Create comprehensive API documentation in docs/api/
+- [ ] T213 [P] Create deployment guide in docs/deployment/
+- [ ] T214 [P] Run security vulnerability scan with npm audit
+- [ ] T215 [P] Run performance audit on critical pages
+- [ ] T216 [P] Validate all quickstart.md testing scenarios
+- [ ] T217 Code cleanup and refactoring across backend and frontend
+- [ ] T218 Final integration testing across all user stories
 
 ---
 
@@ -546,24 +597,40 @@ Stories complete and integrate independently, enabling faster delivery.
 
 ## Task Summary
 
-**Total Tasks**: 182
+**Total Tasks**: 218 (increased from 182 to address critical gaps)
 
 **By Phase**:
-- Phase 1 (Setup): 18 tasks
-- Phase 2 (Foundational): 36 tasks
-- Phase 3 (US1 - Patient Booking): 18 tasks
-- Phase 4 (US2 - Practitioner Calendar): 18 tasks
-- Phase 5 (US3 - SOAP Notes): 19 tasks
-- Phase 6 (US4 - Billing): 19 tasks
-- Phase 7 (US5 - Patient Safety): 20 tasks
-- Phase 8 (US6 - HIPAA Compliance): 17 tasks
-- Phase 9 (Polish): 17 tasks
+- Phase 1 (Setup): 19 tasks (+1: RDS backup automation)
+- Phase 2 (Foundational): 43 tasks (+7: patient auth, Sentry, SendGrid, cost monitoring)
+- Phase 3 (US1 - Patient Booking): 27 tasks (+9: test tasks, reminder scheduling)
+- Phase 4 (US2 - Practitioner Calendar): 18 tasks (no change)
+- Phase 5 (US3 - SOAP Notes): 24 tasks (+5: test tasks)
+- Phase 6 (US4 - Billing): 23 tasks (+4: test tasks)
+- Phase 7 (US5 - Patient Safety): 24 tasks (+4: test tasks)
+- Phase 8 (US6 - HIPAA Compliance): 23 tasks (+6: test tasks)
+- Phase 9 (Polish): 17 tasks (no change)
 
-**Parallelizable Tasks**: 102 tasks marked with [P] (56% can run in parallel within their phase)
+**Test Tasks Added**: 36 test tasks per Constitution Principle IV (Test-First for Healthcare)
+- US1: 5 test tasks (contract, integration, tenant isolation)
+- US3: 5 test tasks (encryption, versioning, PHI de-identification)
+- US4: 4 test tasks (payments, audit logging)
+- US5: 4 test tasks (tenant isolation, audit logging)
+- US6: 6 test tasks (MFA, session timeout, soft delete, security penetration)
 
-**MVP Scope**: Phases 1-3 only (72 tasks, ~10-14 days)
+**Critical Gaps Addressed**:
+1. ✅ Test-First principle compliance (Constitution Principle IV)
+2. ✅ Patient authentication (magic link/OTP) - FR-002
+3. ✅ Email reminder scheduling (SQS/Lambda) - FR-015
+4. ✅ Sentry error tracking - FR-054
+5. ✅ RDS automated backups - FR-057
+6. ✅ SendGrid email service integration
+7. ✅ CloudWatch cost monitoring alarms - FR-055
 
-**Full Feature Set**: All 182 tasks (~8-9 weeks with incremental delivery)
+**Parallelizable Tasks**: 138 tasks marked with [P] (63% can run in parallel within their phase)
+
+**MVP Scope**: Phases 1-3 only (89 tasks, ~12-16 days with test-first approach)
+
+**Full Feature Set**: All 218 tasks (~9-11 weeks with incremental delivery and TDD)
 
 ---
 
