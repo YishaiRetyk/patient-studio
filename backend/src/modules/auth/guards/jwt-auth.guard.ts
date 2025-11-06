@@ -1,7 +1,22 @@
-import { Injectable, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+  Logger,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
-import { verify } from 'jsonwebtoken';
+import { verify, JwtPayload } from 'jsonwebtoken';
+
+interface CustomJwtPayload extends JwtPayload {
+  sub: string;
+  email: string;
+  tenantId: string;
+  role: string;
+  authProviderId: string;
+  iat: number;
+  lastActivity?: number;
+}
 
 /**
  * JWT Authentication Guard (T032)
@@ -27,7 +42,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     try {
       const authConfig = this.configService.get('auth');
-      const payload = verify(token, authConfig.jwt.secret);
+      const payload = verify(token, authConfig.jwt.secret) as CustomJwtPayload;
 
       // Attach user to request
       request.user = {
