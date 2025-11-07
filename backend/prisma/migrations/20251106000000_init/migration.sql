@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS extensions;
+
 -- CreateExtension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA extensions;
 
