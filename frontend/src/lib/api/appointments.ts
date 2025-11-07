@@ -60,6 +60,16 @@ const appointmentsApi = {
     const response = await apiClient.patch(`/appointments/${params.id}`, params.data);
     return response.data;
   },
+
+  cancelAppointment: async (params: {
+    id: string;
+    cancellationReason?: string;
+  }): Promise<{ message: string; appointment: Appointment }> => {
+    const response = await apiClient.delete(`/appointments/${params.id}`, {
+      data: { cancellationReason: params.cancellationReason },
+    });
+    return response.data;
+  },
 };
 
 // Hooks
@@ -88,5 +98,11 @@ export function useCreateAppointment() {
 export function useUpdateAppointment() {
   return useMutation({
     mutationFn: appointmentsApi.updateAppointment,
+  });
+}
+
+export function useCancelAppointment() {
+  return useMutation({
+    mutationFn: appointmentsApi.cancelAppointment,
   });
 }
