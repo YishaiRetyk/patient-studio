@@ -80,7 +80,10 @@ export class AppointmentsService {
         entityId: id,
         action: AuditAction.UPDATE,
         beforeValue: { status: current.status },
-        afterValue: { status: AppointmentStatus.CANCELLED, cancellationReason: data.cancellationReason },
+        afterValue: {
+          status: AppointmentStatus.CANCELLED,
+          cancellationReason: data.cancellationReason,
+        },
       });
     }
 

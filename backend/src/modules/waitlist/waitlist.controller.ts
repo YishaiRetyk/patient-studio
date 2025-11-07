@@ -94,11 +94,7 @@ export class WaitlistController {
   @HttpCode(HttpStatus.OK)
   @AuditLog({ entityType: 'WaitlistEntry' })
   async claimWaitlistSlot(@Param('id') id: string, @Request() req: any) {
-    const entry = await this.waitlistService.claimWaitlistSlot(
-      id,
-      req.user.tenantId,
-      req.user.sub,
-    );
+    const entry = await this.waitlistService.claimWaitlistSlot(id, req.user.tenantId, req.user.sub);
 
     return {
       message: 'Waitlist slot claimed successfully',

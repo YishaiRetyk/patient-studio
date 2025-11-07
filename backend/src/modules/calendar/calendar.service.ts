@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/database/prisma.service';
 import { AppointmentStatus } from '@prisma/client';
 
@@ -109,20 +104,21 @@ export class CalendarService {
     // Build description
     const description = this.escapeText(
       `Patient: ${appointment.patient.fullName}\\n` +
-      `Phone: ${appointment.patient.phone}\\n` +
-      `Status: ${appointment.status}\\n` +
-      `Practitioner: ${practitionerName}`,
+        `Phone: ${appointment.patient.phone}\\n` +
+        `Status: ${appointment.status}\\n` +
+        `Practitioner: ${practitionerName}`,
     );
 
     // Build location (can be customized)
     const location = this.escapeText('Patient Studio');
 
     // Status mapping
-    const status = appointment.status === AppointmentStatus.COMPLETED
-      ? 'CONFIRMED'
-      : appointment.status === AppointmentStatus.CANCELLED
-      ? 'CANCELLED'
-      : 'CONFIRMED';
+    const status =
+      appointment.status === AppointmentStatus.COMPLETED
+        ? 'CONFIRMED'
+        : appointment.status === AppointmentStatus.CANCELLED
+          ? 'CANCELLED'
+          : 'CONFIRMED';
 
     return [
       'BEGIN:VEVENT',
@@ -164,11 +160,11 @@ export class CalendarService {
    */
   private escapeText(text: string): string {
     return text
-      .replace(/\\/g, '\\\\')  // Backslash
-      .replace(/;/g, '\\;')    // Semicolon
-      .replace(/,/g, '\\,')    // Comma
-      .replace(/\n/g, '\\n')   // Newline
-      .replace(/\r/g, '');     // Remove carriage return
+      .replace(/\\/g, '\\\\') // Backslash
+      .replace(/;/g, '\\;') // Semicolon
+      .replace(/,/g, '\\,') // Comma
+      .replace(/\n/g, '\\n') // Newline
+      .replace(/\r/g, ''); // Remove carriage return
   }
 
   /**

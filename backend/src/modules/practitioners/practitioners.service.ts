@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/database/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { Practitioner, AuditAction } from '@prisma/client';
@@ -175,13 +170,23 @@ export class PractitionersService {
    * Format: { "monday": [{"start": "09:00", "end": "17:00"}], ... }
    */
   private validateAvailableHours(availableHours: AvailableHours): void {
-    const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const validDays = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ];
     const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
     for (const [day, hours] of Object.entries(availableHours)) {
       // Validate day name
       if (!validDays.includes(day.toLowerCase())) {
-        throw new BadRequestException(`Invalid day name: ${day}. Must be one of: ${validDays.join(', ')}`);
+        throw new BadRequestException(
+          `Invalid day name: ${day}. Must be one of: ${validDays.join(', ')}`,
+        );
       }
 
       // Validate hours array
@@ -247,7 +252,7 @@ export class PractitionersService {
     const start2 = this.timeToMinutes(slot2.start);
     const end2 = this.timeToMinutes(slot2.end);
 
-    return (start1 < end2 && end1 > start2);
+    return start1 < end2 && end1 > start2;
   }
 
   /**
@@ -264,7 +269,7 @@ export class PractitionersService {
  */
 export interface TimeSlot {
   start: string; // Format: "HH:MM" (24-hour)
-  end: string;   // Format: "HH:MM" (24-hour)
+  end: string; // Format: "HH:MM" (24-hour)
 }
 
 export interface AvailableHours {

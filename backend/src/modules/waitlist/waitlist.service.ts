@@ -8,7 +8,7 @@ import {
 import { PrismaService } from '../../common/database/prisma.service';
 import { EmailService } from '../notifications/email.service';
 import { AuditService } from '../audit/audit.service';
-import { WaitlistEntry, WaitlistStatus, AuditAction, AppointmentStatus } from '@prisma/client';
+import { WaitlistEntry, WaitlistStatus, AuditAction } from '@prisma/client';
 
 /**
  * Waitlist Service (T094-T095)
@@ -80,10 +80,7 @@ export class WaitlistService {
   /**
    * Get waitlist entries for a patient
    */
-  async getPatientWaitlistEntries(
-    patientId: string,
-    tenantId: string,
-  ): Promise<WaitlistEntry[]> {
+  async getPatientWaitlistEntries(patientId: string, tenantId: string): Promise<WaitlistEntry[]> {
     return this.prisma.waitlistEntry.findMany({
       where: {
         patientId,
@@ -262,9 +259,7 @@ export class WaitlistService {
 
     // Validate entry is in ACTIVE status
     if (entry.status !== WaitlistStatus.ACTIVE) {
-      throw new BadRequestException(
-        `Cannot claim waitlist entry with status: ${entry.status}`,
-      );
+      throw new BadRequestException(`Cannot claim waitlist entry with status: ${entry.status}`);
     }
 
     // Validate claim window (1 hour from notification)
@@ -357,11 +352,7 @@ export class WaitlistService {
   /**
    * Remove from waitlist (patient cancels waitlist entry)
    */
-  async removeFromWaitlist(
-    waitlistId: string,
-    tenantId: string,
-    userId?: string,
-  ): Promise<void> {
+  async removeFromWaitlist(waitlistId: string, tenantId: string, userId?: string): Promise<void> {
     const entry = await this.prisma.waitlistEntry.findFirst({
       where: {
         id: waitlistId,
