@@ -19,7 +19,7 @@ const customJestConfig = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/.next/',
-    '/tests/e2e/', // Ignore Playwright E2E tests
+    'tests/e2e', // Ignore Playwright E2E tests (no leading/trailing slashes for regex match)
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
