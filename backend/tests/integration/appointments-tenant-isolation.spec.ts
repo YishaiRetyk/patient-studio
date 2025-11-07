@@ -173,7 +173,9 @@ describe('Tenant Isolation on Appointments (Integration)', () => {
       });
 
       expect(tenant1Appointments.length).toBeGreaterThan(0);
-      expect(tenant1Appointments.every((a) => a.tenantId === tenant1Id)).toBe(true);
+      expect(tenant1Appointments.every((a: any) => a.tenantId === tenant1Id)).toBe(
+        true,
+      );
 
       // Query as Tenant 2 - should only see Tenant 2 appointments
       await prisma.setTenantContext(tenant2Id);
@@ -182,7 +184,9 @@ describe('Tenant Isolation on Appointments (Integration)', () => {
       });
 
       expect(tenant2Appointments.length).toBeGreaterThan(0);
-      expect(tenant2Appointments.every((a) => a.tenantId === tenant2Id)).toBe(true);
+      expect(tenant2Appointments.every((a: any) => a.tenantId === tenant2Id)).toBe(
+        true,
+      );
     });
 
     it('should prevent cross-tenant appointment queries', async () => {

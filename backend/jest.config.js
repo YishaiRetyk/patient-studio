@@ -3,7 +3,13 @@ module.exports = {
   rootDir: '.',
   testRegex: '.*\\.spec\\.ts$',
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.(t|j)s$': ['ts-jest', {
+      tsconfig: {
+        module: 'commonjs',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+      },
+    }],
   },
   collectCoverageFrom: [
     'src/**/*.ts',
@@ -29,8 +35,15 @@ module.exports = {
       displayName: 'unit',
       testMatch: ['<rootDir>/src/**/*.spec.ts'],
       testEnvironment: 'node',
+      moduleFileExtensions: ['js', 'json', 'ts'],
       transform: {
-        '^.+\\.(t|j)s$': 'ts-jest',
+        '^.+\\.(t|j)s$': ['ts-jest', {
+          tsconfig: {
+            module: 'commonjs',
+            esModuleInterop: true,
+            allowSyntheticDefaultImports: true,
+          },
+        }],
       },
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
@@ -43,8 +56,15 @@ module.exports = {
       displayName: 'integration',
       testMatch: ['<rootDir>/tests/integration/**/*.spec.ts'],
       testEnvironment: 'node',
+      moduleFileExtensions: ['js', 'json', 'ts'],
       transform: {
-        '^.+\\.(t|j)s$': 'ts-jest',
+        '^.+\\.(t|j)s$': ['ts-jest', {
+          tsconfig: {
+            module: 'commonjs',
+            esModuleInterop: true,
+            allowSyntheticDefaultImports: true,
+          },
+        }],
       },
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
@@ -58,8 +78,15 @@ module.exports = {
       displayName: 'contract',
       testMatch: ['<rootDir>/tests/contract/**/*.spec.ts'],
       testEnvironment: 'node',
+      moduleFileExtensions: ['js', 'json', 'ts'],
       transform: {
-        '^.+\\.(t|j)s$': 'ts-jest',
+        '^.+\\.(t|j)s$': ['ts-jest', {
+          tsconfig: {
+            module: 'commonjs',
+            esModuleInterop: true,
+            allowSyntheticDefaultImports: true,
+          },
+        }],
       },
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',

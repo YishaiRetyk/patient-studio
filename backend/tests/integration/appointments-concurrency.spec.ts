@@ -246,7 +246,9 @@ describe('Double-Booking Prevention (Integration)', () => {
       expect(appointments.length).toBe(5);
 
       // Verify unique time slots
-      const uniqueStartTimes = new Set(appointments.map((a) => a.startTime.toISOString()));
+      const uniqueStartTimes = new Set(
+        appointments.map((a: any) => a.startTime.toISOString()),
+      );
       expect(uniqueStartTimes.size).toBe(5);
     });
   });
