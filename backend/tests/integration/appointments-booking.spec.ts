@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../../../src/app.module';
-import { PrismaService } from '../../../src/common/database/prisma.service';
-import { AppointmentsService } from '../../../src/modules/appointments/appointments.service';
+import { AppModule } from '../../src/app.module';
+import { PrismaService } from '../../src/common/database/prisma.service';
+import { AppointmentsService } from '../../src/modules/appointments/appointments.service';
 
 /**
  * Integration Test: Appointment Booking with Optimistic Locking (T065)
