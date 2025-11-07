@@ -65,12 +65,8 @@ export function WaitlistPanel({
     <div className="rounded-lg border border-gray-200 bg-white">
       {/* Header */}
       <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          Waitlist ({entries.length})
-        </h3>
-        <p className="mt-1 text-sm text-gray-500">
-          First-come, first-served order
-        </p>
+        <h3 className="text-lg font-semibold text-gray-900">Waitlist ({entries.length})</h3>
+        <p className="mt-1 text-sm text-gray-500">First-come, first-served order</p>
       </div>
 
       {/* Entries list */}
@@ -78,13 +74,9 @@ export function WaitlistPanel({
         {sortedEntries.map((entry, index) => {
           const isNotified = !!entry.notifiedAt;
           const isClaimed = entry.status === 'CLAIMED';
-          const isExpired = entry.status === 'EXPIRED';
 
           return (
-            <div
-              key={entry.id}
-              className="px-6 py-4 hover:bg-gray-50"
-            >
+            <div key={entry.id} className="px-6 py-4 hover:bg-gray-50">
               <div className="flex items-start justify-between">
                 {/* Entry info */}
                 <div className="flex-1">
@@ -100,13 +92,9 @@ export function WaitlistPanel({
                         Patient ID: {entry.patientId.slice(0, 8)}...
                       </p>
                       <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
-                        <span>
-                          {format(new Date(entry.desiredDateStart), 'MMM d, yyyy')}
-                        </span>
+                        <span>{format(new Date(entry.desiredDateStart), 'MMM d, yyyy')}</span>
                         <span>-</span>
-                        <span>
-                          {format(new Date(entry.desiredDateEnd), 'MMM d, yyyy')}
-                        </span>
+                        <span>{format(new Date(entry.desiredDateEnd), 'MMM d, yyyy')}</span>
                       </div>
                     </div>
 
@@ -122,9 +110,7 @@ export function WaitlistPanel({
 
                   {/* Additional info */}
                   <div className="mt-2 text-sm text-gray-600">
-                    <p>
-                      Added {formatDistanceToNow(new Date(entry.createdAt))} ago
-                    </p>
+                    <p>Added {formatDistanceToNow(new Date(entry.createdAt))} ago</p>
                     {isNotified && (
                       <p className="text-blue-600">
                         Notified {formatDistanceToNow(new Date(entry.notifiedAt!))} ago

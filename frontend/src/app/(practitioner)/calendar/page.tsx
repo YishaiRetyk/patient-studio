@@ -108,9 +108,7 @@ export default function PractitionerCalendarPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">My Calendar</h1>
-          <p className="mt-2 text-gray-600">
-            Manage your appointments, availability, and waitlist
-          </p>
+          <p className="mt-2 text-gray-600">Manage your appointments, availability, and waitlist</p>
         </div>
 
         {/* Action Bar */}
@@ -150,7 +148,7 @@ export default function PractitionerCalendarPage() {
                   <div className="font-medium capitalize text-gray-700">{day}</div>
                   {slots && slots.length > 0 ? (
                     <div className="mt-1 space-y-1 text-xs text-gray-600">
-                      {slots.map((slot, idx) => (
+                      {slots.map((slot: { start: string; end: string }, idx: number) => (
                         <div key={idx}>
                           {slot.start} - {slot.end}
                         </div>

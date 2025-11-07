@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AvailableHours, TimeSlot } from '@/lib/api/practitioners';
+import { AvailableHours } from '@/lib/api/practitioners';
 
 /**
  * Availability Settings Modal Component (T104)
@@ -71,7 +71,7 @@ export function AvailabilitySettings({
     Object.entries(hours).forEach(([day, slots]) => {
       if (!slots || slots.length === 0) return;
 
-      slots.forEach((slot, idx) => {
+      slots.forEach((slot: { start: string; end: string }, idx: number) => {
         const key = `${day}-${idx}`;
 
         // Validate time format
@@ -90,16 +90,14 @@ export function AvailabilitySettings({
         }
 
         // Check for overlaps
-        slots.forEach((otherSlot, otherIdx) => {
+        slots.forEach((otherSlot: { start: string; end: string }, otherIdx: number) => {
           if (idx === otherIdx) return;
 
           const [os1, oe1] = [slot.start, slot.end];
           const [os2, oe2] = [otherSlot.start, otherSlot.end];
 
           const overlap =
-            (os1 >= os2 && os1 < oe2) ||
-            (oe1 > os2 && oe1 <= oe2) ||
-            (os1 <= os2 && oe1 >= oe2);
+            (os1 >= os2 && os1 < oe2) || (oe1 > os2 && oe1 <= oe2) || (os1 <= os2 && oe1 >= oe2);
 
           if (overlap) {
             newErrors[key] = 'Time slots overlap';
@@ -121,9 +119,7 @@ export function AvailabilitySettings({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-6 text-2xl font-bold text-gray-900">
-          Configure Available Hours
-        </h2>
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">Configure Available Hours</h2>
 
         <div className="space-y-6">
           {DAYS_OF_WEEK.map(({ key, label }) => (
@@ -148,37 +144,27 @@ export function AvailabilitySettings({
                         <div className="flex-1">
                           <div className="flex items-center gap-3">
                             <div>
-                              <label className="mb-1 block text-xs text-gray-600">
-                                Start Time
-                              </label>
+                              <label className="mb-1 block text-xs text-gray-600">Start Time</label>
                               <input
                                 type="time"
                                 value={slot.start}
-                                onChange={(e) =>
-                                  updateTimeSlot(key, idx, 'start', e.target.value)
-                                }
+                                onChange={(e) => updateTimeSlot(key, idx, 'start', e.target.value)}
                                 className="rounded-md border border-gray-300 px-3 py-2"
                               />
                             </div>
                             <div className="pt-6">-</div>
                             <div>
-                              <label className="mb-1 block text-xs text-gray-600">
-                                End Time
-                              </label>
+                              <label className="mb-1 block text-xs text-gray-600">End Time</label>
                               <input
                                 type="time"
                                 value={slot.end}
-                                onChange={(e) =>
-                                  updateTimeSlot(key, idx, 'end', e.target.value)
-                                }
+                                onChange={(e) => updateTimeSlot(key, idx, 'end', e.target.value)}
                                 className="rounded-md border border-gray-300 px-3 py-2"
                               />
                             </div>
                           </div>
                           {errors[errorKey] && (
-                            <p className="mt-1 text-sm text-red-600">
-                              {errors[errorKey]}
-                            </p>
+                            <p className="mt-1 text-sm text-red-600">{errors[errorKey]}</p>
                           )}
                         </div>
                         <button

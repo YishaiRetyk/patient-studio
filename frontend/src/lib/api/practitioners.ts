@@ -22,7 +22,7 @@ export interface Practitioner {
 
 export interface TimeSlot {
   start: string; // Format: "HH:MM" (24-hour)
-  end: string;   // Format: "HH:MM" (24-hour)
+  end: string; // Format: "HH:MM" (24-hour)
 }
 
 export interface AvailableHours {

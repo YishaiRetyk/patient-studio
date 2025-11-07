@@ -33,11 +33,7 @@ interface FullCalendarProps {
   onAppointmentClick?: (appointment: CalendarAppointment) => void;
 }
 
-export function FullCalendar({
-  appointments,
-  onDateClick,
-  onAppointmentClick,
-}: FullCalendarProps) {
+export function FullCalendar({ appointments, onDateClick, onAppointmentClick }: FullCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const monthStart = startOfMonth(currentMonth);
@@ -78,9 +74,7 @@ export function FullCalendar({
     <div className="w-full">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">
-          {format(currentMonth, 'MMMM yyyy')}
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900">{format(currentMonth, 'MMMM yyyy')}</h2>
         <div className="flex gap-2">
           <button
             onClick={goToPreviousMonth}
@@ -174,9 +168,7 @@ export function FullCalendar({
                     );
                   })}
                   {dayAppointments.length > 3 && (
-                    <div className="text-xs text-gray-500">
-                      +{dayAppointments.length - 3} more
-                    </div>
+                    <div className="text-xs text-gray-500">+{dayAppointments.length - 3} more</div>
                   )}
                 </div>
               </div>
