@@ -149,12 +149,19 @@ export class EmailService {
   }
 
   /**
-   * Send waitlist notification
+   * Send waitlist notification (T095)
+   * Per FR-025: Notify patient when their desired time slot becomes available
    */
   async sendWaitlistNotification(
     email: string,
-    patientName: string,
-    availableTime: Date,
+    details: {
+      patientName: string;
+      practitionerName: string;
+      startTime: Date;
+      endTime: Date;
+      claimUrl: string;
+      expiresAt: Date;
+    },
   ): Promise<void> {
     const sendgridConfig = this.configService.get('sendgrid');
 
@@ -166,12 +173,17 @@ export class EmailService {
       },
       subject: 'Appointment Slot Available - Patient Studio',
       html: `
-        <h2>Appointment Slot Available</h2>
-        <p>Dear ${patientName},</p>
+        <h2>Appointment Slot Available!</h2>
+        <p>Dear ${details.patientName},</p>
         <p>Good news! An appointment slot has become available at your preferred time:</p>
-        <p><strong>${availableTime.toLocaleString()}</strong></p>
-        <p><a href="${this.configService.get('NEXT_PUBLIC_APP_URL')}/appointments/claim" style="background-color: #0ea5e9; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Claim This Slot</a></p>
-        <p><small>This notification expires in 24 hours. First come, first served.</small></p>
+        <ul>
+          <li><strong>Practitioner:</strong> ${details.practitionerName}</li>
+          <li><strong>Date & Time:</strong> ${details.startTime.toLocaleString()}</li>
+          <li><strong>Duration:</strong> ${Math.round((details.endTime.getTime() - details.startTime.getTime()) / 60000)} minutes</li>
+        </ul>
+        <p><a href="${details.claimUrl}" style="background-color: #0ea5e9; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Claim This Slot Now</a></p>
+        <p><small><strong>Important:</strong> This slot will be offered to the next person on the waitlist if not claimed by ${details.expiresAt.toLocaleString()} (1 hour from notification).</small></p>
+        <p><small>First come, first served.</small></p>
       `,
     };
 

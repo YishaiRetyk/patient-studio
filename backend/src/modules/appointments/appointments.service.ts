@@ -25,6 +25,69 @@ export class AppointmentsService {
   ) {}
 
   /**
+   * Cancel appointment and trigger waitlist notifications (T096)
+   * Per FR-026: Automatic waitlist notification on cancellation
+   */
+  async cancel(
+    id: string,
+    data: {
+      cancellationReason?: string;
+      tenantId: string;
+      userId?: string;
+    },
+  ): Promise<Appointment> {
+    // Fetch current appointment
+    const current = await this.prisma.appointment.findFirst({
+      where: {
+        id,
+        tenantId: data.tenantId,
+      },
+    });
+
+    if (!current) {
+      throw new NotFoundException('Appointment not found or access denied');
+    }
+
+    // Cannot cancel already cancelled or completed appointments
+    if (current.status === AppointmentStatus.CANCELLED) {
+      throw new BadRequestException('Appointment is already cancelled');
+    }
+    if (current.status === AppointmentStatus.COMPLETED) {
+      throw new BadRequestException('Cannot cancel completed appointments');
+    }
+
+    // Update appointment status to CANCELLED
+    const cancelled = await this.prisma.appointment.update({
+      where: { id },
+      data: {
+        status: AppointmentStatus.CANCELLED,
+        cancellationReason: data.cancellationReason,
+      },
+      include: {
+        patient: true,
+        practitioner: true,
+      },
+    });
+
+    this.logger.log(`Appointment cancelled: ${id}`);
+
+    // Log audit event
+    if (data.userId) {
+      await this.auditService.logPhiAccess({
+        userId: data.userId,
+        tenantId: data.tenantId,
+        entityType: 'Appointment',
+        entityId: id,
+        action: AuditAction.UPDATE,
+        beforeValue: { status: current.status },
+        afterValue: { status: AppointmentStatus.CANCELLED, cancellationReason: data.cancellationReason },
+      });
+    }
+
+    return cancelled;
+  }
+
+  /**
    * Create appointment with optimistic locking (T073)
    * Per FR-011, FR-012, FR-014: Booking with double-booking prevention
    */

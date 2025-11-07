@@ -29,11 +29,15 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 // Feature modules (Phase 3+)
 import { AppointmentsModule } from './modules/appointments/appointments.module';
 
-// Feature modules (to be implemented in Phase 4+)
+// Feature modules (Phase 4)
+import { PractitionersModule } from './modules/practitioners/practitioners.module';
+import { WaitlistModule } from './modules/waitlist/waitlist.module';
+import { CalendarModule } from './modules/calendar/calendar.module';
+
+// Feature modules (to be implemented in Phase 5+)
 // import { PatientsModule } from './modules/patients/patients.module';
 // import { NotesModule } from './modules/notes/notes.module';
 // import { BillingModule } from './modules/billing/billing.module';
-// import { PractitionersModule } from './modules/practitioners/practitioners.module';
 
 /**
  * Root Application Module (T051)
@@ -76,11 +80,15 @@ import { AppointmentsModule } from './modules/appointments/appointments.module';
     // Phase 3 modules
     AppointmentsModule,
 
-    // Feature modules (to be added in Phase 4+)
+    // Phase 4 modules
+    PractitionersModule,
+    WaitlistModule,
+    CalendarModule,
+
+    // Feature modules (to be added in Phase 5+)
     // PatientsModule,
     // NotesModule,
     // BillingModule,
-    // PractitionersModule,
   ],
   providers: [
     // Global services
