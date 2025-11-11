@@ -34,9 +34,9 @@ import { PractitionersModule } from './modules/practitioners/practitioners.modul
 import { WaitlistModule } from './modules/waitlist/waitlist.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 
-// Feature modules (to be implemented in Phase 5+)
+// Feature modules (Phase 5+)
 // import { PatientsModule } from './modules/patients/patients.module';
-// import { NotesModule } from './modules/notes/notes.module';
+import { ClinicalNotesModule } from './modules/notes/notes.module';
 // import { BillingModule } from './modules/billing/billing.module';
 
 /**
@@ -85,9 +85,11 @@ import { CalendarModule } from './modules/calendar/calendar.module';
     WaitlistModule,
     CalendarModule,
 
-    // Feature modules (to be added in Phase 5+)
+    // Phase 5 modules
+    ClinicalNotesModule,
+
+    // Feature modules (to be added later)
     // PatientsModule,
-    // NotesModule,
     // BillingModule,
   ],
   providers: [
