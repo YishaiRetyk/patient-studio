@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum, IsObject, ValidateNested, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+  IsObject,
+  ValidateNested,
+  MaxLength,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 /**
@@ -35,7 +43,9 @@ export class PartialNoteDto {
   @MaxLength(10000)
   plan?: string;
 
-  @IsEnum(SoapSection, { message: 'soapSection must be one of: subjective, objective, assessment, plan' })
+  @IsEnum(SoapSection, {
+    message: 'soapSection must be one of: subjective, objective, assessment, plan',
+  })
   @IsNotEmpty()
   soapSection: SoapSection;
 }

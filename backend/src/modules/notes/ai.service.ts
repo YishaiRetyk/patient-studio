@@ -12,10 +12,7 @@ import OpenAI from 'openai';
 export class AIService {
   private readonly logger = new Logger(AIService.name);
   private readonly openai: OpenAI;
-  private readonly rateLimitMap: Map<
-    string,
-    { count: number; resetTime: number }
-  > = new Map();
+  private readonly rateLimitMap: Map<string, { count: number; resetTime: number }> = new Map();
 
   // Rate limiting: 20 requests per minute per user (FR-046)
   private readonly RATE_LIMIT = 20;
@@ -79,20 +76,11 @@ export class AIService {
     deidentified = deidentified.replace(/\b\d{10}\b/g, '##########');
 
     // 4. Replace email addresses
-    deidentified = deidentified.replace(
-      /\b[\w.-]+@[\w.-]+\.\w+\b/g,
-      'email@redacted',
-    );
+    deidentified = deidentified.replace(/\b[\w.-]+@[\w.-]+\.\w+\b/g, 'email@redacted');
 
     // 5. Replace dates (MM/DD/YYYY, YYYY-MM-DD)
-    deidentified = deidentified.replace(
-      /\b\d{2}\/\d{2}\/\d{4}\b/g,
-      '##/##/####',
-    );
-    deidentified = deidentified.replace(
-      /\b\d{4}-\d{2}-\d{2}\b/g,
-      '####-##-##',
-    );
+    deidentified = deidentified.replace(/\b\d{2}\/\d{2}\/\d{4}\b/g, '##/##/####');
+    deidentified = deidentified.replace(/\b\d{4}-\d{2}-\d{2}\b/g, '####-##-##');
 
     // 6. Replace street addresses (basic pattern)
     deidentified = deidentified.replace(
@@ -116,16 +104,10 @@ export class AIService {
     );
 
     // 10. Replace URLs
-    deidentified = deidentified.replace(
-      /https?:\/\/[^\s]+/g,
-      '[URL REDACTED]',
-    );
+    deidentified = deidentified.replace(/https?:\/\/[^\s]+/g, '[URL REDACTED]');
 
     // 11. Replace IP addresses
-    deidentified = deidentified.replace(
-      /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
-      '[IP REDACTED]',
-    );
+    deidentified = deidentified.replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, '[IP REDACTED]');
 
     return deidentified;
   }
@@ -164,7 +146,13 @@ export class AIService {
    * Per FR-044: OpenAI GPT-4o autocompletion with rate limiting
    */
   async generateSoapCompletion(params: {
-    partialNote: { subjective?: string; objective?: string; assessment?: string; plan?: string; soapSection: 'subjective' | 'objective' | 'assessment' | 'plan' };
+    partialNote: {
+      subjective?: string;
+      objective?: string;
+      assessment?: string;
+      plan?: string;
+      soapSection: 'subjective' | 'objective' | 'assessment' | 'plan';
+    };
     context: { patientName: string; appointmentDate: string };
     userId: string;
     tenantId: string;
@@ -196,21 +184,19 @@ export class AIService {
       .join('\n');
 
     // De-identify PHI before sending to OpenAI
-    const deidentifiedContext = this.deidentifyPHI(
-      noteContext,
-      context.patientName,
-    );
+    const deidentifiedContext = this.deidentifyPHI(noteContext, context.patientName);
 
     // Log de-identification (without actual PHI)
-    this.logger.log(
-      `PHI de-identification applied for tenant ${tenantId}, user ${userId}`,
-    );
+    this.logger.log(`PHI de-identification applied for tenant ${tenantId}, user ${userId}`);
 
     // Construct prompt based on SOAP section
     const sectionPrompts = {
-      subjective: 'You are a medical documentation assistant. Based on the context below, continue or complete the Subjective section of this SOAP note. Be concise and clinical. Focus on patient-reported symptoms and concerns.',
-      objective: 'You are a medical documentation assistant. Based on the context below, continue or complete the Objective section of this SOAP note. Be concise and clinical. Focus on observable findings and clinical observations.',
-      assessment: 'You are a medical documentation assistant. Based on the context below, continue or complete the Assessment section of this SOAP note. Be concise and clinical. Focus on clinical impressions and diagnoses.',
+      subjective:
+        'You are a medical documentation assistant. Based on the context below, continue or complete the Subjective section of this SOAP note. Be concise and clinical. Focus on patient-reported symptoms and concerns.',
+      objective:
+        'You are a medical documentation assistant. Based on the context below, continue or complete the Objective section of this SOAP note. Be concise and clinical. Focus on observable findings and clinical observations.',
+      assessment:
+        'You are a medical documentation assistant. Based on the context below, continue or complete the Assessment section of this SOAP note. Be concise and clinical. Focus on clinical impressions and diagnoses.',
       plan: 'You are a medical documentation assistant. Based on the context below, continue or complete the Plan section of this SOAP note. Be concise and clinical. Focus on treatment recommendations and follow-up actions.',
     };
 
@@ -265,10 +251,7 @@ export class AIService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      this.logger.error(
-        `OpenAI API error for tenant ${tenantId}:`,
-        error.message,
-      );
+      this.logger.error(`OpenAI API error for tenant ${tenantId}:`, error.message);
 
       if (error.status === 429) {
         throw new Error('OpenAI API rate limit exceeded. Please try again later.');

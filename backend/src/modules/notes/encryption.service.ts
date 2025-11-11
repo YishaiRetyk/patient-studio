@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { KMSClient, DecryptCommand, GenerateDataKeyCommand } from '@aws-sdk/client-kms';
+import { KMSClient, GenerateDataKeyCommand } from '@aws-sdk/client-kms';
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
 /**
@@ -23,7 +23,9 @@ export class EncryptionService {
     this.kmsKeyId = this.configService.get<string>('AWS_KMS_KEY_ID', '');
 
     if (!this.kmsKeyId) {
-      this.logger.warn('AWS_KMS_KEY_ID not configured. Encryption service may not function correctly.');
+      this.logger.warn(
+        'AWS_KMS_KEY_ID not configured. Encryption service may not function correctly.',
+      );
     }
 
     this.kmsClient = new KMSClient({ region });
@@ -104,11 +106,7 @@ export class EncryptionService {
       const authTag = cipher.getAuthTag();
 
       // Combine IV + authTag + encrypted data
-      const combined = Buffer.concat([
-        iv,
-        authTag,
-        Buffer.from(encrypted, 'base64'),
-      ]);
+      const combined = Buffer.concat([iv, authTag, Buffer.from(encrypted, 'base64')]);
 
       // Return as base64-encoded string
       return combined.toString('base64');
@@ -175,17 +173,13 @@ export class EncryptionService {
     assessmentEncrypted: string;
     planEncrypted: string;
   }> {
-    const [
-      subjectiveEncrypted,
-      objectiveEncrypted,
-      assessmentEncrypted,
-      planEncrypted,
-    ] = await Promise.all([
-      this.encrypt(soapNote.subjective, tenantId),
-      this.encrypt(soapNote.objective, tenantId),
-      this.encrypt(soapNote.assessment, tenantId),
-      this.encrypt(soapNote.plan, tenantId),
-    ]);
+    const [subjectiveEncrypted, objectiveEncrypted, assessmentEncrypted, planEncrypted] =
+      await Promise.all([
+        this.encrypt(soapNote.subjective, tenantId),
+        this.encrypt(soapNote.objective, tenantId),
+        this.encrypt(soapNote.assessment, tenantId),
+        this.encrypt(soapNote.plan, tenantId),
+      ]);
 
     return {
       subjectiveEncrypted,

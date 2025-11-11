@@ -83,11 +83,7 @@ export class ClinicalNotesController {
   @HttpCode(HttpStatus.OK)
   @AuditLog({ entityType: 'ClinicalNote' })
   async findOne(@Param('id') id: string, @Request() req: any) {
-    const note = await this.clinicalNotesService.findOne(
-      id,
-      req.user.tenantId,
-      req.user.userId,
-    );
+    const note = await this.clinicalNotesService.findOne(id, req.user.tenantId, req.user.userId);
 
     // Return note with decrypted sections
     return {
@@ -117,11 +113,7 @@ export class ClinicalNotesController {
   @Roles(UserRole.PRACTITIONER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @AuditLog({ entityType: 'ClinicalNote' })
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateNoteDto,
-    @Request() req: any,
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateNoteDto, @Request() req: any) {
     const updatedNote = await this.clinicalNotesService.update(id, {
       tenantId: req.user.tenantId,
       userId: req.user.userId,
@@ -207,10 +199,7 @@ export class ClinicalNotesController {
   @Get('appointment/:appointmentId')
   @Roles(UserRole.PRACTITIONER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  async findByAppointment(
-    @Param('appointmentId') appointmentId: string,
-    @Request() req: any,
-  ) {
+  async findByAppointment(@Param('appointmentId') appointmentId: string, @Request() req: any) {
     const note = await this.clinicalNotesService.findByAppointment(
       appointmentId,
       req.user.tenantId,
@@ -240,10 +229,7 @@ export class ClinicalNotesController {
   @Roles(UserRole.PRACTITIONER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   async getAuditHistory(@Param('id') id: string, @Request() req: any) {
-    const auditHistory = await this.clinicalNotesService.getAuditHistory(
-      id,
-      req.user.tenantId,
-    );
+    const auditHistory = await this.clinicalNotesService.getAuditHistory(id, req.user.tenantId);
 
     return { auditHistory };
   }

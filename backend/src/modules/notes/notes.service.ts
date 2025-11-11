@@ -4,7 +4,6 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaClient, ClinicalNote, AppointmentStatus } from '@prisma/client';
 import { EncryptionService } from './encryption.service';
@@ -49,6 +48,8 @@ export class ClinicalNotesService {
       appointmentId,
       practitionerId,
       tenantId,
+      // userId is not used but required by interface for audit context
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       userId,
       subjective,
       objective,
@@ -66,9 +67,7 @@ export class ClinicalNotesService {
     });
 
     if (existingNote) {
-      throw new ConflictException(
-        'Clinical note already exists for this appointment',
-      );
+      throw new ConflictException('Clinical note already exists for this appointment');
     }
 
     // Encrypt all SOAP sections
@@ -89,9 +88,7 @@ export class ClinicalNotesService {
       },
     });
 
-    this.logger.log(
-      `Clinical note created: ${note.id} for appointment ${appointmentId}`,
-    );
+    this.logger.log(`Clinical note created: ${note.id} for appointment ${appointmentId}`);
 
     return note;
   }
@@ -114,6 +111,8 @@ export class ClinicalNotesService {
       currentVersion?: number; // For optimistic locking
     },
   ): Promise<ClinicalNote> {
+    // userId is not used but required by interface for audit context
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { tenantId, userId, currentVersion, ...updateData } = params;
 
     // Fetch existing note
@@ -167,9 +166,7 @@ export class ClinicalNotesService {
       },
     });
 
-    this.logger.log(
-      `Clinical note updated: ${noteId}, new version: ${updatedNote.version}`,
-    );
+    this.logger.log(`Clinical note updated: ${noteId}, new version: ${updatedNote.version}`);
 
     return updatedNote;
   }
@@ -182,13 +179,15 @@ export class ClinicalNotesService {
   async findOne(
     noteId: string,
     tenantId: string,
-    userId: string,
-  ): Promise<ClinicalNote & {
-    subjective: string;
-    objective: string;
-    assessment: string;
-    plan: string;
-  }> {
+    _userId: string,
+  ): Promise<
+    ClinicalNote & {
+      subjective: string;
+      objective: string;
+      assessment: string;
+      plan: string;
+    }
+  > {
     // Verify tenant isolation
     const note = await this.prisma.clinicalNote.findFirst({
       where: { id: noteId, tenantId },
@@ -257,10 +256,7 @@ export class ClinicalNotesService {
   /**
    * Find note by appointment ID
    */
-  async findByAppointment(
-    appointmentId: string,
-    tenantId: string,
-  ): Promise<ClinicalNote | null> {
+  async findByAppointment(appointmentId: string, tenantId: string): Promise<ClinicalNote | null> {
     const note = await this.prisma.clinicalNote.findFirst({
       where: { appointmentId, tenantId },
     });
@@ -273,11 +269,7 @@ export class ClinicalNotesService {
    * Task ID: T118
    * Per FR-047: Generate PDF for practitioners
    */
-  async generatePDF(
-    noteId: string,
-    tenantId: string,
-    userId: string,
-  ): Promise<Buffer> {
+  async generatePDF(noteId: string, tenantId: string, userId: string): Promise<Buffer> {
     // Retrieve and decrypt note
     const note = await this.findOne(noteId, tenantId, userId);
 
@@ -345,10 +337,7 @@ export class ClinicalNotesService {
    * Task ID: T125
    * Per FR-043: Notes can only be created for past appointments
    */
-  private async validatePastAppointment(
-    appointmentId: string,
-    tenantId: string,
-  ): Promise<void> {
+  private async validatePastAppointment(appointmentId: string, tenantId: string): Promise<void> {
     const appointment = await this.prisma.appointment.findFirst({
       where: { id: appointmentId, tenantId },
     });
@@ -359,9 +348,7 @@ export class ClinicalNotesService {
 
     // Check if appointment is in the past
     if (appointment.startTime > new Date()) {
-      throw new BadRequestException(
-        'Clinical notes can only be created for past appointments',
-      );
+      throw new BadRequestException('Clinical notes can only be created for past appointments');
     }
 
     // Check if appointment is completed or no-show
@@ -401,10 +388,7 @@ export class ClinicalNotesService {
    * Task ID: T120
    * Per FR-050: Complete audit trail for PHI access
    */
-  async getAuditHistory(
-    noteId: string,
-    tenantId: string,
-  ): Promise<any[]> {
+  async getAuditHistory(noteId: string, tenantId: string): Promise<any[]> {
     const auditLogs = await this.prisma.auditEvent.findMany({
       where: {
         tenantId,
