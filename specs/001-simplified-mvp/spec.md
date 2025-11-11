@@ -209,6 +209,10 @@ As a healthcare platform, the system must protect patient health information (PH
 - **FR-055**: System MUST use CloudWatch for infrastructure monitoring with alerts at 80% and 100% of resource thresholds
 - **FR-056**: System MUST track cost-per-tenant metrics monthly to ensure unit economics
 - **FR-057**: System MUST configure automated database backups with 30-day retention and point-in-time recovery enabled
+- **FR-058**: System MUST implement email delivery failure handling with retry logic: 3 retry attempts with exponential backoff (1 min, 5 min, 15 min), log failures to CloudWatch, and send alerts to operations team for critical notifications (appointment confirmations, waitlist notifications, magic links)
+- **FR-059**: System MUST return consistent error responses for invalid input validation across all API endpoints with structure: HTTP status code (400 Bad Request), error code (e.g., VALIDATION_ERROR), human-readable message, and field-specific validation errors array with field name, error type, and message
+- **FR-060**: System MUST handle session expiration gracefully with UX flow: detect expired sessions on API requests (401 Unauthorized), clear client-side session storage, redirect users to login page with message "Your session has expired. Please log in again", preserve intended destination URL for post-login redirect, and log session expiration events
+- **FR-061**: System MUST meet WCAG 2.1 Level AA accessibility standards for all user-facing interfaces including: keyboard navigation support for all interactive elements, ARIA labels for screen readers, minimum color contrast ratio of 4.5:1 for text, focus indicators for all focusable elements, and alt text for all images
 
 ### Key Entities
 
