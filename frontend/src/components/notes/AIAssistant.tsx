@@ -52,7 +52,8 @@ export function AIAssistant({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSection, partialNote, isOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const handleRequestCompletion = useCallback(async () => {
     if (aiCompleteMutation.isPending) return;
@@ -99,7 +100,7 @@ export function AIAssistant({
         <button
           onClick={handleRequestCompletion}
           disabled={aiCompleteMutation.isPending}
-          className="group relative rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="group relative rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           aria-label="AI Assistant"
           title="Get AI completion (Ctrl+Space)"
         >
@@ -111,23 +112,19 @@ export function AIAssistant({
             stroke="currentColor"
             strokeWidth={2}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13 10V3L4 14h7v7l9-11h-7z"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
 
           {/* Tooltip */}
           <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block">
-            <div className="rounded-md bg-gray-900 px-3 py-2 text-xs text-white whitespace-nowrap">
+            <div className="whitespace-nowrap rounded-md bg-gray-900 px-3 py-2 text-xs text-white">
               AI Assistant (Ctrl+Space)
-              <div className="text-gray-400 mt-1">Get SOAP note suggestions</div>
+              <div className="mt-1 text-gray-400">Get SOAP note suggestions</div>
             </div>
           </div>
 
           {/* Pulse animation */}
-          <span className="absolute inset-0 rounded-full bg-blue-400 opacity-75 animate-ping"></span>
+          <span className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-75"></span>
         </button>
       </div>
     );
@@ -135,8 +132,10 @@ export function AIAssistant({
 
   // Full modal when open or loading
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${className}`}>
-      <div className="w-full max-w-2xl mx-4 rounded-lg bg-white shadow-2xl">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${className}`}
+    >
+      <div className="mx-4 w-full max-w-2xl rounded-lg bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <div className="flex items-center space-x-3">
@@ -148,17 +147,14 @@ export function AIAssistant({
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900">AI Assistant</h2>
               <p className="text-sm text-gray-500">
-                Suggestion for <span className="font-medium capitalize">{currentSection}</span> section
+                Suggestion for <span className="font-medium capitalize">{currentSection}</span>{' '}
+                section
               </p>
             </div>
           </div>
@@ -185,7 +181,7 @@ export function AIAssistant({
             // Loading state
             <div className="flex flex-col items-center justify-center py-12">
               <div className="relative">
-                <div className="h-16 w-16 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin"></div>
+                <div className="h-16 w-16 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <svg
                     className="h-8 w-8 text-blue-600"
@@ -207,14 +203,10 @@ export function AIAssistant({
             </div>
           ) : aiCompleteMutation.isError ? (
             // Error state
-            <div className="rounded-md bg-red-50 border border-red-200 p-4">
+            <div className="rounded-md border border-red-200 bg-red-50 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-red-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -225,7 +217,8 @@ export function AIAssistant({
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">AI Completion Failed</h3>
                   <p className="mt-2 text-sm text-red-700">
-                    {(aiCompleteMutation.error as Error)?.message || 'An unexpected error occurred. Please try again.'}
+                    {(aiCompleteMutation.error as Error)?.message ||
+                      'An unexpected error occurred. Please try again.'}
                   </p>
                 </div>
               </div>
@@ -233,15 +226,15 @@ export function AIAssistant({
           ) : completion ? (
             // Success state with completion
             <div>
-              <div className="rounded-md bg-gray-50 border border-gray-200 p-4 mb-4">
-                <div className="text-sm text-gray-900 whitespace-pre-wrap">{completion}</div>
+              <div className="mb-4 rounded-md border border-gray-200 bg-gray-50 p-4">
+                <div className="whitespace-pre-wrap text-sm text-gray-900">{completion}</div>
               </div>
 
               {/* HIPAA Notice */}
-              <div className="rounded-md bg-blue-50 border border-blue-200 p-3">
+              <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
                 <div className="flex items-start">
                   <svg
-                    className="h-4 w-4 text-blue-400 mt-0.5"
+                    className="mt-0.5 h-4 w-4 text-blue-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >

@@ -105,7 +105,12 @@ export interface AuditEvent {
   entityId: string;
   userId: string;
   timestamp: string;
-  metadata: any;
+  metadata: {
+    changedFields?: string[];
+    newVersion?: number;
+    version?: number;
+    [key: string]: unknown;
+  };
   user: {
     email: string;
     role: string;
@@ -133,7 +138,9 @@ const notesApi = {
   /**
    * Get clinical note by appointment ID
    */
-  getNoteByAppointment: async (appointmentId: string): Promise<{ id: string; version: number } | null> => {
+  getNoteByAppointment: async (
+    appointmentId: string
+  ): Promise<{ id: string; version: number } | null> => {
     const response = await apiClient.get(`/notes/appointment/${appointmentId}`);
     return response.data;
   },
@@ -189,10 +196,7 @@ const notesApi = {
 /**
  * Hook to get a clinical note by ID
  */
-export function useNote(
-  id: string | undefined,
-  options?: UseQueryOptions<ClinicalNote>
-) {
+export function useNote(id: string | undefined, options?: UseQueryOptions<ClinicalNote>) {
   return useQuery({
     queryKey: ['note', id],
     queryFn: () => notesApi.getNote(id!),

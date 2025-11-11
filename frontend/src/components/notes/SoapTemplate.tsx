@@ -28,7 +28,8 @@ const soapSections = [
     key: 'subjective' as const,
     label: 'Subjective',
     description: 'Patient-reported symptoms, concerns, and feelings',
-    placeholder: 'Document what the patient reports about their condition, symptoms, and concerns...',
+    placeholder:
+      'Document what the patient reports about their condition, symptoms, and concerns...',
     color: 'border-blue-300 focus:border-blue-500',
   },
   {
@@ -85,7 +86,7 @@ export function SoapTemplate({
           <div className="mb-3">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">{section.label}</h3>
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+              <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
                 {section.key}
               </span>
             </div>
@@ -104,27 +105,16 @@ export function SoapTemplate({
               placeholder={readOnly ? '' : section.placeholder}
               rows={6}
               maxLength={10000}
-              className={`
-                w-full rounded-md border-2 ${section.color} bg-white px-4 py-3
-                text-sm text-gray-900 placeholder-gray-400
-                transition-colors duration-200
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500
-                ${readOnly ? 'cursor-default bg-gray-50' : ''}
-              `}
+              className={`w-full rounded-md border-2 ${section.color} bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 ${readOnly ? 'cursor-default bg-gray-50' : ''} `}
               disabled={readOnly}
             />
 
             {/* Character count */}
             {!readOnly && (
               <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                <span>
-                  {value[section.key].length} / 10,000 characters
-                </span>
+                <span>{value[section.key].length} / 10,000 characters</span>
                 {value[section.key].length > 9500 && (
-                  <span className="text-amber-600 font-medium">
-                    Approaching character limit
-                  </span>
+                  <span className="font-medium text-amber-600">Approaching character limit</span>
                 )}
               </div>
             )}
@@ -133,7 +123,7 @@ export function SoapTemplate({
       ))}
 
       {/* HIPAA Notice */}
-      <div className="rounded-md bg-blue-50 border border-blue-200 p-4">
+      <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
         <div className="flex items-start">
           <div className="flex-shrink-0">
             <svg
@@ -154,8 +144,9 @@ export function SoapTemplate({
             <h3 className="text-sm font-medium text-blue-800">HIPAA Compliance Notice</h3>
             <div className="mt-2 text-sm text-blue-700">
               <p>
-                All clinical notes are encrypted at rest and in transit. PHI is automatically de-identified
-                before AI assistance. Access to this information is logged for audit purposes.
+                All clinical notes are encrypted at rest and in transit. PHI is automatically
+                de-identified before AI assistance. Access to this information is logged for audit
+                purposes.
               </p>
             </div>
           </div>
@@ -179,11 +170,11 @@ export function SoapDisplay({ note, className = '' }: SoapDisplayProps) {
     <div className={`space-y-4 ${className}`}>
       {soapSections.map((section) => (
         <div key={section.key} className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">
+          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-700">
             {section.label}
           </h3>
-          <div className="text-sm text-gray-900 whitespace-pre-wrap">
-            {note[section.key] || <span className="text-gray-400 italic">No content</span>}
+          <div className="whitespace-pre-wrap text-sm text-gray-900">
+            {note[section.key] || <span className="italic text-gray-400">No content</span>}
           </div>
         </div>
       ))}

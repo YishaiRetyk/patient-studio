@@ -24,14 +24,19 @@ export function VersionHistory({ noteId, currentVersion, className = '' }: Versi
   const auditEvents = data?.auditHistory || [];
 
   // Group events by version
-  const versionGroups = auditEvents.reduce((acc, event) => {
-    const version = (event.metadata?.newVersion || event.metadata?.version || currentVersion) as number;
-    if (!acc[version]) {
-      acc[version] = [];
-    }
-    acc[version].push(event);
-    return acc;
-  }, {} as Record<number, AuditEvent[]>);
+  const versionGroups = auditEvents.reduce(
+    (acc, event) => {
+      const version = (event.metadata?.newVersion ||
+        event.metadata?.version ||
+        currentVersion) as number;
+      if (!acc[version]) {
+        acc[version] = [];
+      }
+      acc[version].push(event);
+      return acc;
+    },
+    {} as Record<number, AuditEvent[]>
+  );
 
   const versions = Object.keys(versionGroups)
     .map(Number)
@@ -140,8 +145,10 @@ export function VersionHistory({ noteId, currentVersion, className = '' }: Versi
   }
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${className}`}>
-      <div className="w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col rounded-lg bg-white shadow-2xl">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${className}`}
+    >
+      <div className="mx-4 flex max-h-[80vh] w-full max-w-2xl flex-col rounded-lg bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <div>
@@ -171,12 +178,14 @@ export function VersionHistory({ noteId, currentVersion, className = '' }: Versi
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin"></div>
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
               <p className="ml-3 text-sm text-gray-600">Loading version history...</p>
             </div>
           ) : isError ? (
-            <div className="rounded-md bg-red-50 border border-red-200 p-4">
-              <p className="text-sm text-red-700">Failed to load version history. Please try again.</p>
+            <div className="rounded-md border border-red-200 bg-red-50 p-4">
+              <p className="text-sm text-red-700">
+                Failed to load version history. Please try again.
+              </p>
             </div>
           ) : auditEvents.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -194,14 +203,16 @@ export function VersionHistory({ noteId, currentVersion, className = '' }: Versi
                 />
               </svg>
               <p className="mt-4 text-sm font-medium text-gray-900">No history available</p>
-              <p className="mt-1 text-sm text-gray-500">Version history will appear here once changes are made.</p>
+              <p className="mt-1 text-sm text-gray-500">
+                Version history will appear here once changes are made.
+              </p>
             </div>
           ) : (
             <div className="space-y-6">
               {versions.map((version) => (
                 <div key={version} className="relative">
                   {/* Version Header */}
-                  <div className="flex items-center space-x-3 mb-3">
+                  <div className="mb-3 flex items-center space-x-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-600">
                       v{version}
                     </div>
@@ -226,7 +237,7 @@ export function VersionHistory({ noteId, currentVersion, className = '' }: Versi
                         <div className="rounded-md border border-gray-200 bg-white p-3 shadow-sm">
                           <div className="flex items-start space-x-3">
                             {getActionIcon(event.action)}
-                            <div className="flex-1 min-w-0">
+                            <div className="min-w-0 flex-1">
                               <div className="flex items-center justify-between">
                                 <p className="text-sm font-medium text-gray-900">
                                   {getActionLabel(event.action)}
@@ -235,9 +246,7 @@ export function VersionHistory({ noteId, currentVersion, className = '' }: Versi
                                   {formatDate(event.timestamp)}
                                 </p>
                               </div>
-                              <p className="mt-1 text-sm text-gray-600">
-                                by {event.user.email}
-                              </p>
+                              <p className="mt-1 text-sm text-gray-600">by {event.user.email}</p>
                               {event.metadata?.changedFields && (
                                 <div className="mt-2 flex flex-wrap gap-1">
                                   {event.metadata.changedFields.map((field: string) => (
@@ -270,7 +279,7 @@ export function VersionHistory({ noteId, currentVersion, className = '' }: Versi
             </p>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Close
             </button>

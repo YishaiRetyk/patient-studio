@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   useNote,
@@ -33,16 +33,17 @@ export default function NoteEditorPage() {
     assessment: '',
     plan: '',
   });
-  const [currentSection, setCurrentSection] = useState<'subjective' | 'objective' | 'assessment' | 'plan'>('subjective');
+  const [currentSection, setCurrentSection] = useState<
+    'subjective' | 'objective' | 'assessment' | 'plan'
+  >('subjective');
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // API hooks
   const { data: existingNoteRef } = useNoteByAppointment(appointmentId);
-  const { data: existingNote, isLoading: isLoadingNote } = useNote(
-    existingNoteRef?.id,
-    { enabled: !!existingNoteRef?.id }
-  );
+  const { data: existingNote, isLoading: isLoadingNote } = useNote(existingNoteRef?.id, {
+    enabled: !!existingNoteRef?.id,
+  });
   const createNoteMutation = useCreateNote();
   const updateNoteMutation = useUpdateNote();
   const exportPDFMutation = useExportPDF();
@@ -68,6 +69,7 @@ export default function NoteEditorPage() {
     }, 2000); // Auto-save after 2 seconds of inactivity
 
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [note, existingNote]);
 
   const handleNoteChange = (updatedNote: SoapNote) => {
@@ -157,7 +159,7 @@ export default function NoteEditorPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="h-12 w-12 mx-auto rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin"></div>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
           <p className="mt-4 text-sm text-gray-600">Loading clinical note...</p>
         </div>
       </div>
@@ -167,8 +169,8 @@ export default function NoteEditorPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="sticky top-0 z-40 border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             {/* Left: Back button and title */}
             <div className="flex items-center space-x-4">
@@ -177,13 +179,17 @@ export default function NoteEditorPage() {
                 className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 <svg
-                  className="h-4 w-4 mr-2"
+                  className="mr-2 h-4 w-4"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth={2}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
                 </svg>
                 Back
               </button>
@@ -204,13 +210,17 @@ export default function NoteEditorPage() {
                 <div className="flex items-center space-x-2 text-sm">
                   {saveStatus === 'saving' && (
                     <>
-                      <div className="h-4 w-4 rounded-full border-2 border-blue-200 border-t-blue-600 animate-spin"></div>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600"></div>
                       <span className="text-gray-600">Saving...</span>
                     </>
                   )}
                   {saveStatus === 'saved' && (
                     <>
-                      <svg className="h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <svg
+                        className="h-4 w-4 text-green-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -237,10 +247,7 @@ export default function NoteEditorPage() {
 
               {/* Version History */}
               {existingNote && (
-                <VersionHistory
-                  noteId={existingNote.id}
-                  currentVersion={existingNote.version}
-                />
+                <VersionHistory noteId={existingNote.id} currentVersion={existingNote.version} />
               )}
 
               {/* Export PDF */}
@@ -271,7 +278,7 @@ export default function NoteEditorPage() {
               <button
                 onClick={handleSave}
                 disabled={!canSave || isSaving}
-                className="inline-flex items-center space-x-2 rounded-md bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center space-x-2 rounded-md bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <svg
                   className="h-5 w-5"
@@ -294,7 +301,7 @@ export default function NoteEditorPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <SoapTemplate
           value={note}
           onChange={handleNoteChange}
