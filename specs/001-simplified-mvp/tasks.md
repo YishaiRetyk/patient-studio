@@ -209,36 +209,36 @@
 
 ### Test Tasks (Write First - MUST FAIL Before Implementation)
 
-- [ ] T108 [P] [US3] Write contract test for POST /notes endpoint in backend/tests/contract/notes-create.contract.spec.ts
-- [ ] T109 [P] [US3] Write contract test for POST /notes/ai-complete endpoint in backend/tests/contract/notes-ai.contract.spec.ts
-- [ ] T110 [P] [US3] Write integration test for SOAP note encryption/decryption in backend/tests/integration/notes-encryption.spec.ts
-- [ ] T111 [P] [US3] Write integration test for note versioning and audit trail in backend/tests/integration/notes-versioning.spec.ts
-- [ ] T112 [P] [US3] Write unit test for PHI de-identification logic in backend/tests/unit/ai-service-phi-deidentification.spec.ts
+- [X] T108 [P] [US3] Write contract test for POST /notes endpoint in backend/tests/contract/notes-create.contract.spec.ts
+- [X] T109 [P] [US3] Write contract test for POST /notes/ai-complete endpoint in backend/tests/contract/notes-ai.contract.spec.ts
+- [X] T110 [P] [US3] Write integration test for SOAP note encryption/decryption in backend/tests/integration/notes-encryption.spec.ts
+- [X] T111 [P] [US3] Write integration test for note versioning and audit trail in backend/tests/integration/notes-versioning.spec.ts
+- [X] T112 [P] [US3] Write unit test for PHI de-identification logic in backend/tests/unit/ai-service-phi-deidentification.spec.ts
 
 ### Backend Implementation
 
-- [ ] T113 [P] [US3] Define ClinicalNote model with encrypted fields in backend/prisma/schema.prisma
-- [ ] T114 [US3] Create and apply ClinicalNote migration in backend/prisma/migrations/
-- [ ] T115 [P] [US3] Create OpenAI service integration in backend/src/modules/clinical-notes/ai.service.ts per research.md
-- [ ] T116 [P] [US3] Implement PHI de-identification for AI requests
-- [ ] T117 [P] [US3] Implement AI autocompletion with rate limiting (20 req/min per user)
-- [ ] T118 [P] [US3] Create PDF generation service in backend/src/modules/clinical-notes/pdf.service.ts
-- [ ] T119 [P] [US3] Create ClinicalNotesService in backend/src/modules/clinical-notes/notes.service.ts
-- [ ] T120 [P] [US3] Implement note versioning and audit trail
-- [ ] T121 [P] [US3] Implement note encryption/decryption with per-tenant keys
-- [ ] T122 [US3] Create ClinicalNotesController in backend/src/modules/clinical-notes/notes.controller.ts
-- [ ] T123 [US3] Add notes endpoints: POST /notes, PATCH /notes/:id, POST /notes/ai-complete, GET /notes/:id/pdf
-- [ ] T124 [US3] Create ClinicalNotes module
-- [ ] T125 [P] [US3] Add validation: notes only for past appointments
+- [X] T113 [P] [US3] Define ClinicalNote model with encrypted fields in backend/prisma/schema.prisma
+- [X] T114 [US3] Create and apply ClinicalNote migration in backend/prisma/migrations/
+- [X] T115 [P] [US3] Create OpenAI service integration in backend/src/modules/notes/ai.service.ts per research.md
+- [X] T116 [P] [US3] Implement PHI de-identification for AI requests
+- [X] T117 [P] [US3] Implement AI autocompletion with rate limiting (20 req/min per user)
+- [X] T118 [P] [US3] Create PDF generation service in backend/src/modules/notes/pdf.service.ts
+- [X] T119 [P] [US3] Create ClinicalNotesService in backend/src/modules/notes/notes.service.ts
+- [X] T120 [P] [US3] Implement note versioning and audit trail
+- [X] T121 [P] [US3] Implement note encryption/decryption with per-tenant keys
+- [X] T122 [US3] Create ClinicalNotesController in backend/src/modules/notes/notes.controller.ts
+- [X] T123 [US3] Add notes endpoints: POST /notes, PATCH /notes/:id, POST /notes/ai-complete, GET /notes/:id/pdf
+- [X] T124 [US3] Create ClinicalNotes module
+- [X] T125 [P] [US3] Add validation: notes only for past appointments
 
 ### Frontend Implementation
 
-- [ ] T126 [P] [US3] Create SOAP note editor page in frontend/src/app/(practitioner)/notes/[appointmentId]/page.tsx
-- [ ] T127 [P] [US3] Create SOAP template component in frontend/src/components/notes/SoapTemplate.tsx
-- [ ] T128 [P] [US3] Create AI autocompletion UI with keyboard shortcut in frontend/src/components/notes/AIAssistant.tsx
-- [ ] T129 [P] [US3] Create note version history component in frontend/src/components/notes/VersionHistory.tsx
-- [ ] T130 [US3] Create clinical notes API hooks in frontend/src/lib/api/notes.ts
-- [ ] T131 [US3] Implement note save with optimistic updates
+- [X] T126 [P] [US3] Create SOAP note editor page in frontend/src/app/(practitioner)/notes/[appointmentId]/page.tsx
+- [X] T127 [P] [US3] Create SOAP template component in frontend/src/components/notes/SoapTemplate.tsx
+- [X] T128 [P] [US3] Create AI autocompletion UI with keyboard shortcut in frontend/src/components/notes/AIAssistant.tsx
+- [X] T129 [P] [US3] Create note version history component in frontend/src/components/notes/VersionHistory.tsx
+- [X] T130 [US3] Create clinical notes API hooks in frontend/src/lib/api/notes.ts
+- [X] T131 [US3] Implement note save with optimistic updates
 
 **Checkpoint**: All three user stories (booking, calendar, notes) should now be independently functional
 
