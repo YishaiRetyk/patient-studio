@@ -196,7 +196,10 @@ const notesApi = {
 /**
  * Hook to get a clinical note by ID
  */
-export function useNote(id: string | undefined, options?: UseQueryOptions<ClinicalNote>) {
+export function useNote(
+  id: string | undefined,
+  options?: Omit<UseQueryOptions<ClinicalNote>, 'queryKey' | 'queryFn'>
+) {
   return useQuery({
     queryKey: ['note', id],
     queryFn: () => notesApi.getNote(id!),
@@ -210,7 +213,7 @@ export function useNote(id: string | undefined, options?: UseQueryOptions<Clinic
  */
 export function useNoteByAppointment(
   appointmentId: string | undefined,
-  options?: UseQueryOptions<{ id: string; version: number } | null>
+  options?: Omit<UseQueryOptions<{ id: string; version: number } | null>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: ['note', 'appointment', appointmentId],
@@ -310,7 +313,7 @@ export function useExportPDF() {
  */
 export function useNoteAuditHistory(
   id: string | undefined,
-  options?: UseQueryOptions<{ auditHistory: AuditEvent[] }>
+  options?: Omit<UseQueryOptions<{ auditHistory: AuditEvent[] }>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: ['note', id, 'audit'],
