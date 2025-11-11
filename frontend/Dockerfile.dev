@@ -1,0 +1,20 @@
+# Development Dockerfile for Next.js frontend
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install development dependencies
+RUN apk add --no-cache bash git
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm install
+
+# Expose port
+EXPOSE 3000
+
+# Development command (overridden by docker-compose)
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,367 @@
+// Prisma Schema: Patient & Studio Scheduler Simplified MVP
+// Generated: 2025-11-06
+// Database: PostgreSQL 16 with Row-Level Security
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [uuid_ossp(schema: "extensions")]
+}
+
+// =============================================================================
+// Core Multi-Tenant Schema
+// =============================================================================
+
+model Tenant {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  practiceName      String   @map("practice_name") @db.VarChar(255)
+  subscriptionPlan  SubscriptionPlan @default(FREE) @map("subscription_plan")
+  status            TenantStatus @default(ACTIVE)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  users             User[]
+  patients          Patient[]
+  practitioners     Practitioner[]
+  appointments      Appointment[]
+  waitlistEntries   WaitlistEntry[]
+  clinicalNotes     ClinicalNote[]
+  invoices          Invoice[]
+  auditEvents       AuditEvent[]
+
+  @@map("tenants")
+}
+
+enum SubscriptionPlan {
+  FREE
+  BASIC
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+}
+
+// =============================================================================
+// User Management & Authentication
+// =============================================================================
+
+model User {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  email             String   @db.VarChar(255)
+  role              UserRole
+  authProvider      String   @default("auth0") @map("auth_provider") @db.VarChar(50)
+  authProviderId    String   @map("auth_provider_id") @db.VarChar(255)
+  mfaEnabled        Boolean  @default(false) @map("mfa_enabled")
+  status            UserStatus @default(ACTIVE)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  lastLoginAt       DateTime? @map("last_login_at")
+
+  // Relationships
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  practitioner      Practitioner?
+  auditEvents       AuditEvent[]
+
+  @@unique([tenantId, email], name: "unique_email_per_tenant")
+  @@index([tenantId])
+  @@index([authProviderId])
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  PRACTITIONER
+  PATIENT
+}
+
+enum UserStatus {
+  ACTIVE
+  LOCKED
+  DELETED
+}
+
+model Practitioner {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  userId            String   @unique @map("user_id") @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  fullName          String   @map("full_name") @db.VarChar(255)
+  specialty         String?  @db.VarChar(255)
+  licenseNumber     String?  @map("license_number") @db.VarChar(100)
+  availableHours    Json?    @map("available_hours") // JSON: { "monday": [{"start": "09:00", "end": "17:00"}], ... }
+  calendarToken     String?  @unique @map("calendar_token") @db.VarChar(64) // iCal export token
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  appointments      Appointment[]
+  clinicalNotes     ClinicalNote[]
+
+  @@index([tenantId])
+  @@map("practitioners")
+}
+
+// =============================================================================
+// Patient Management
+// =============================================================================
+
+model Patient {
+  id                        String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  tenantId                  String   @map("tenant_id") @db.Uuid
+  fullName                  String   @map("full_name") @db.VarChar(255)
+  dateOfBirth               DateTime @map("date_of_birth") @db.Date
+  phone                     String   @db.VarChar(50)
+  email                     String   @db.VarChar(255)
+  emergencyContactName      String   @map("emergency_contact_name") @db.VarChar(255)
+  emergencyContactPhone     String   @map("emergency_contact_phone") @db.VarChar(50)
+  emergencyContactRelationship String @map("emergency_contact_relationship") @db.VarChar(100)
+  ssnEncrypted              String?  @map("ssn_encrypted") @db.Text // Field-level encrypted
+  createdAt                 DateTime @default(now()) @map("created_at")
+  updatedAt                 DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  tenant                    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  allergies                 Allergy[]
+  medications               Medication[]
+  appointments              Appointment[]
+  invoices                  Invoice[]
+
+  @@unique([tenantId, email], name: "unique_patient_email_per_tenant")
+  @@index([tenantId])
+  @@index([tenantId, fullName])
+  @@map("patients")
+}
+
+model Allergy {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  patientId         String   @map("patient_id") @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  allergen          String   @db.VarChar(255)
+  reaction          String?  @db.Text
+  severity          AllergySeverity
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  patient           Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([patientId])
+  @@map("allergies")
+}
+
+enum AllergySeverity {
+  MILD
+  MODERATE
+  SEVERE
+  LIFE_THREATENING
+}
+
+model Medication {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  patientId         String   @map("patient_id") @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  medicationName    String   @map("medication_name") @db.VarChar(255)
+  dosage            String?  @db.VarChar(100)
+  frequency         String?  @db.VarChar(100)
+  prescribingProvider String? @map("prescribing_provider") @db.VarChar(255)
+  startDate         DateTime? @map("start_date") @db.Date
+  endDate           DateTime? @map("end_date") @db.Date
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  patient           Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([patientId])
+  @@map("medications")
+}
+
+// =============================================================================
+// Appointment Scheduling
+// =============================================================================
+
+model Appointment {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  patientId         String   @map("patient_id") @db.Uuid
+  practitionerId    String   @map("practitioner_id") @db.Uuid
+  startTime         DateTime @map("start_time")
+  endTime           DateTime @map("end_time")
+  status            AppointmentStatus @default(SCHEDULED)
+  cancellationReason String? @map("cancellation_reason") @db.Text
+  version           Int      @default(1) // Optimistic locking for double-booking prevention
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient           Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  practitioner      Practitioner @relation(fields: [practitionerId], references: [id], onDelete: Cascade)
+  clinicalNote      ClinicalNote?
+  invoice           Invoice?
+
+  @@unique([practitionerId, startTime, status], name: "unique_practitioner_slot")
+  @@index([tenantId])
+  @@index([patientId])
+  @@index([practitionerId, startTime])
+  @@index([tenantId, startTime])
+  @@map("appointments")
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model WaitlistEntry {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  patientId         String   @map("patient_id") @db.Uuid
+  practitionerId    String?  @map("practitioner_id") @db.Uuid // Optional: specific practitioner preference
+  desiredDateStart  DateTime @map("desired_date_start")
+  desiredDateEnd    DateTime @map("desired_date_end")
+  status            WaitlistStatus @default(ACTIVE)
+  createdAt         DateTime @default(now()) @map("created_at")
+  notifiedAt        DateTime? @map("notified_at")
+  claimedAt         DateTime? @map("claimed_at")
+
+  // Relationships
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status, createdAt])
+  @@index([practitionerId, status])
+  @@map("waitlist_entries")
+}
+
+enum WaitlistStatus {
+  ACTIVE
+  CLAIMED
+  EXPIRED
+}
+
+// =============================================================================
+// Clinical Documentation
+// =============================================================================
+
+model ClinicalNote {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  appointmentId     String   @unique @map("appointment_id") @db.Uuid
+  practitionerId    String   @map("practitioner_id") @db.Uuid
+
+  // SOAP sections - field-level encrypted
+  subjectiveEncrypted String @map("subjective_encrypted") @db.Text
+  objectiveEncrypted  String @map("objective_encrypted") @db.Text
+  assessmentEncrypted String @map("assessment_encrypted") @db.Text
+  planEncrypted       String @map("plan_encrypted") @db.Text
+
+  sharedWithPatient Boolean  @default(false) @map("shared_with_patient")
+  version           Int      @default(1) // Versioning for audit trail
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  appointment       Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  practitioner      Practitioner @relation(fields: [practitionerId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId])
+  @@index([practitionerId])
+  @@index([appointmentId])
+  @@map("clinical_notes")
+}
+
+// =============================================================================
+// Billing & Payments
+// =============================================================================
+
+model Invoice {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  patientId         String   @map("patient_id") @db.Uuid
+  appointmentId     String   @unique @map("appointment_id") @db.Uuid
+  invoiceNumber     String   @unique @map("invoice_number") @db.VarChar(50) // Format: INV-20251106-001
+  amount            Int      // Amount in cents
+  currency          String   @default("usd") @db.VarChar(3)
+  status            InvoiceStatus @default(UNPAID)
+  stripeInvoiceId   String?  @unique @map("stripe_invoice_id") @db.VarChar(255)
+  stripePaymentIntentId String? @unique @map("stripe_payment_intent_id") @db.VarChar(255)
+  paidAt            DateTime? @map("paid_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  patient           Patient  @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  appointment       Appointment @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId])
+  @@index([patientId])
+  @@index([tenantId, status])
+  @@map("invoices")
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+// =============================================================================
+// Audit Logging
+// =============================================================================
+
+model AuditEvent {
+  id                String   @id @default(dbgenerated("extensions.uuid_generate_v4()")) @db.Uuid
+  tenantId          String   @map("tenant_id") @db.Uuid
+  userId            String?  @map("user_id") @db.Uuid
+  eventType         AuditEventType @map("event_type")
+  entityType        String?  @map("entity_type") @db.VarChar(50)
+  entityId          String?  @map("entity_id") @db.Uuid
+  action            AuditAction?
+  beforeValue       Json?    @map("before_value")
+  afterValue        Json?    @map("after_value")
+  ipAddress         String?  @map("ip_address") @db.VarChar(45)
+  userAgent         String?  @map("user_agent") @db.Text
+  timestamp         DateTime @default(now())
+
+  // Relationships
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, timestamp])
+  @@index([userId, timestamp])
+  @@index([eventType, timestamp])
+  @@index([entityType, entityId])
+  @@map("audit_events")
+}
+
+enum AuditEventType {
+  PHI_ACCESS
+  AUTH_EVENT
+  ADMIN_ACTION
+}
+
+enum AuditAction {
+  READ
+  CREATE
+  UPDATE
+  DELETE
+}
