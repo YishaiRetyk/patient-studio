@@ -90,8 +90,11 @@ describe('Note Versioning and Audit Trail (Integration Test)', () => {
         tenantId,
         fullName: 'Test Patient for Versioning',
         email: 'patient-versioning@test.com',
-        phoneNumber: '+1234567890',
+        phone: '+1234567890',
         dateOfBirth: new Date('1990-01-01'),
+        emergencyContactName: 'Test Emergency Contact',
+        emergencyContactPhone: '+0987654321',
+        emergencyContactRelationship: 'Spouse',
       },
     });
     patientId = patient.id;
@@ -574,7 +577,7 @@ describe('Note Versioning and Audit Trail (Integration Test)', () => {
         where: {
           entityType: 'ClinicalNote',
           // entityId: note.id,
-          action: 'SHARE',
+          action: 'UPDATE',
         },
       });
 
