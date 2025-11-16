@@ -17,7 +17,12 @@ export default function BookAppointmentPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [confirmedAppointment, setConfirmedAppointment] = useState<any>(null);
+  const [confirmedAppointment, setConfirmedAppointment] = useState<{
+    practitionerName: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+  } | null>(null);
   const [bookingError, setBookingError] = useState<string | null>(null);
 
   // Date range for availability query (7 days from selected or current date)
@@ -104,20 +109,21 @@ export default function BookAppointmentPage() {
       // Reset form
       setSelectedDate(null);
       setSelectedSlot(null);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle specific error cases (T089)
-      if (error.response?.status === 409) {
+      const err = error as { response?: { status?: number; data?: { message?: string } } };
+      if (err.response?.status === 409) {
         // Concurrent booking - slot already taken
         setBookingError(
           'This time slot was just booked by someone else. Please select another time slot.'
         );
         // Refetch availability to update UI
         // The query will automatically refetch on window focus
-      } else if (error.response?.status === 400) {
+      } else if (err.response?.status === 400) {
         // Validation error
-        const message = error.response.data?.message || 'Invalid booking request';
+        const message = err.response.data?.message || 'Invalid booking request';
         setBookingError(message);
-      } else if (error.response?.status === 401) {
+      } else if (err.response?.status === 401) {
         // Unauthorized
         setBookingError('Please log in to book an appointment');
       } else {
