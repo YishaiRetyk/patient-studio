@@ -186,6 +186,12 @@ export class ClinicalNotesService {
       objective: string;
       assessment: string;
       plan: string;
+      appointment: {
+        id: string;
+        startTime: Date;
+        patient: { id: string; fullName: string };
+        practitioner: { id: string; fullName: string; licenseNumber: string | null };
+      };
     }
   > {
     // Verify tenant isolation
